@@ -1,0 +1,13 @@
+Ubuntu系统备份与还原方案(clonezilla)
+   Clonezilla工具类似windows的Ghost
+   https://blog.csdn.net/kxwinxp/article/details/78825271
+1.下载Clonezilla映像文件
+  http://www.clonezilla.org/downloads.php
+  下载ubuntu stable稳定版
+     CPU architecture: amd64
+     file type: iso
+     respository: auto
+2.下载ISO to USB工具
+   http://download.csdn.net/download/kxwinxp/10174895  
+3.执行ISOtousb把Clonezilla映像文件写入U盘
+4.用U盘启动系统，根据操作提示进行系统备份或还原

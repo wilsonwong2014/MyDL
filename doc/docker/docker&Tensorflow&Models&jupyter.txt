@@ -1,0 +1,138 @@
+《基于docker的Tensorflow的GitHub项目调试环境配置》
+==================================================
+项目资源
+--------
+Tensorflow项目源码地址:
+    http://github.com/tensorflow/tensorflow
+Models项目源码地址
+    http://github.com/tensorflow/models
+从源代码构建Tensorflow
+    https://www.tensorflow.org/install/source
+docker命令详解、宿主机和容器通信原理的问题
+    https://blog.csdn.net/qq_34908167/article/details/79473301
+    https://zhuanlan.zhihu.com/p/26418829?utm_medium=social&utm_source=weibo
+
+宿主机的防火墙 开着么？ sudo service iptables status 看看。
+在宿主机上 执行 sudo netstat -lnp | grep 3306 看看端口3306 被哪个进程使用中。
+
+
+=========================================
+宿主机浏览容器文件系统方法
+    容器启动
+        $python -m http.server 8888
+    宿主机访问
+        http://172.17.0.2:8888
+
+
+==================================================
+1.安装docker
+    $ wget -qO- https://get.docker.com/ | sh
+
+2.安装nvidia-docker
+  https://github.com/NVIDIA/nvidia-docker
+  Quickstart
+  # If you have nvidia-docker 1.0 installed: we need to remove it and all existing GPU containers
+  $docker volume ls -q -f driver=nvidia-docker | xargs -r -I{} -n1 docker ps -q -a -f volume={} | xargs -r docker rm -f
+  $sudo apt-get purge -y nvidia-docker
+
+  # Add the package repositories
+  $curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+    sudo apt-key add -
+  $distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+  $curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+    sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+  $sudo apt-get update
+
+  # Install nvidia-docker2 and reload the Docker daemon configuration
+  $sudo apt-get install -y nvidia-docker2
+  $sudo pkill -SIGHUP dockerd
+
+  # Test nvidia-smi with the latest official CUDA image
+  $docker run --runtime=nvidia --rm nvidia/cuda:9.0-base nvidia-smi
+
+
+3.安装Tensorflow镜像,镜像已集成jupyter
+  $docker pull tensorflow/tensorflow:latest-devel-gpu-py3
+
+4.下载Models
+    https://github.com/tensorflow/models
+    存放在 ~/models-master
+
+5.启动容器并挂载目录
+    $docker run -it --rm -p 8888:8888 --name tf_gpu_py3 --runtime=nvidia --mount type=bind,source=$HOME/models-master,target=/tensorflow/models/ tensorflow/tensorflow:latest-devel-gpu-py3
+    $docker run -it --rm -p 8888:8888 --name tf_gpu_py3 --runtime=nvidia tensorflow/tensorflow:latest-devel-gpu-py3
+
+6.安装Models
+   [容器环境]
+   $cd /tensorflow/models/research
+   $python3 setup.py install
+
+7.添加Tensorflow模块搜索路径
+   [容器环境]
+   $export PYTHONPATH=$PYTHONPATH:/tensorflow/models:/tensorflow/models/research:/tensorflow/models/research/slim
+
+8.测试Models
+   [容器环境]
+   $cd /tensorflow/models/research/deeplab
+   $python3 model_test.py
+
+9.配置远程访问jupyter
+   https://blog.csdn.net/weixin_40008349/article/details/81135847
+   [容器环境]
+   9.1. 生成密码,其中 123456为输入密码，'sha1:5032aa24d339:f523eafad7b8a4b97b0ca0dc771792fa4aab9445'为密文
+    $python3
+    >>> from notebook.auth import passwd
+    >>> passwd()
+    Enter password: 123456
+    Verify password: 123456
+    'sha1:5032aa24d339:f523eafad7b8a4b97b0ca0dc771792fa4aab9445'
+    'sha1:445f12aa7f3b:394c5de9153bbc51adb6cdbe3f1f942c6bb58a92'
+
+   9.2. 安装vim
+    $apt-get install vim
+   
+   9.3. 生成jupyter notebook的配置文件
+    $jupyter notebook --generate-config
+    #这时候会生成配置文件，在 ~/.jupyter/jupyter_notebook_config.py
+
+   9.4. 修改配置文件
+    #$vim ~/.jupyter/jupyter_notebook_config.py
+    $echo "c.NotebookApp.ip='*'" >> ~/.jupyter/jupyter_notebook_config.py
+    $echo "c.NotebookApp.password = u'sha1:445f12aa7f3b:394c5de9153bbc51adb6cdbe3f1f942c6bb58a92'" >> ~/.jupyter/jupyter_notebook_config.py
+    $echo "c.NotebookApp.open_browser = False" >> ~/.jupyter/jupyter_notebook_config.py
+    $echo "c.NotebookApp.port =8888" >> ~/.jupyter/jupyter_notebook_config.py
+
+    c.NotebookApp.ip='*'
+    c.NotebookApp.password = u'sha1:d852f8c4f622:162fa735f9a7324f28233522f10250e555bd94c5'
+    c.NotebookApp.open_browser = False
+    c.NotebookApp.port =8888
+
+
+    #sha1:2144da7eade2:b1b85b23f50aaa6045a3831a3dd08c31d6c76275
+   9.5. 打开jupyter notebook
+    $/usr/local/bin/jupyter notebook --ip=0.0.0.0 --no-browser --allow-root
+    $/usr/local/bin/jupyter notebook --ip=127.0.0.1 --no-browser --allow-root
+
+   9.6. 浏览器访问
+    http://127.0.0.1:8888
+    #密码输入:123456
+
+   ------------------
+   以上方案实施过程出现形如以下错误信息：
+        载入页面时与服务器的连接被重置
+        This site can't be reached, 127.0.0.1 refused to connect
+    ----------------
+    解决方案
+        宿主机
+        $sudo docker run -it --rm -p 8888:8888 tensorflow/tensorflow:nightly-devel-gpu-py3
+        
+        容器:设置密码
+        #jupyter notebook password 
+        启动jupyter
+        #jupyter notebook --allow-root
+    原因分析：
+        可能由参数 --no-browser 造成！
+
+==========================================
+
+

@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 -*-
+
+###########################
+#  命令行参数解析 argparse #
+###########################
+#引用:
+#  import argparse
+#语法说明:
+#  class argparse.ArgumentParser
+#    (prog=None, usage=None, description=None, epilog=None, parents=[], 
+#     formatter_class=argparse.HelpFormatter, prefix_chars='-', 
+#     fromfile_prefix_chars=None, argument_default=None, conflict_handler='error',
+#     add_help=True, allow_abbrev=True
+#     ) 
+#  ArgumentParser类创建时的参数如下：
+#    prog                  - 程序的名字（默认：sys.argv[0]）
+#    usage                 - 描述程序用法的字符串（默认：从解析器的参数生成）
+#    description           - 参数帮助信息之前的文本（默认：空）
+#    epilog                - 参数帮助信息之后的文本（默认：空）
+#    parents               - ArgumentParser 对象的一个列表，这些对象的参数应该包括进去
+#    formatter_class       - 定制化帮助信息的类
+#    prefix_chars          - 可选参数的前缀字符集（默认：‘-‘）
+#    fromfile_prefix_chars - 额外的参数应该读取的文件的前缀字符集（默认：None）
+#    argument_default      - 参数的全局默认值（默认：None）
+#    conflict_handler      - 解决冲突的可选参数的策略（通常没有必要）
+#    add_help              - 给解析器添加-h/–help 选项（默认：True）
+#
+#  ArgumentParser.add_argument
+#   (name or flags...[, action][, nargs][, const][, default]
+#    [, type][, choices][, required][, help][, metavar][, dest]) 
+#  add_argument函数的参数如下：
+#    name or flags - 选项字符串的名字或者列表，例如foo 或者-f, –foo。
+#    action        - 在命令行遇到该参数时采取的基本动作类型。
+#    nargs         - 应该读取的命令行参数数目。
+#    const         - 某些action和nargs选项要求的常数值。
+#    default       - 如果命令行中没有出现该参数时的默认值。
+#    type          - 命令行参数应该被转换成的类型。
+#    choices       - 参数可允许的值的一个容器。
+#    required      - 该命令行选项是否可以省略（只针对可选参数）。
+#    help          - 参数的简短描述。
+#    metavar       - 参数在帮助信息中的名字。
+#    dest          - 给parse_args()返回的对象要添加的属性名称。
+#使用范例:
+# python3 demo_argparse.py 
+# python3 demo_argparse.py --train t1 --val v
+#############################################################
+
+import argparse
+
+# Create ArgumentParser() object
+parser = argparse.ArgumentParser();
+
+# Add argument
+parser.add_argument('--train', required=True, help='path to dataset');
+parser.add_argument('--val', required=True, help='path to dataset');
+parser.add_argument('--total', type=int, help='number of dataset', default=100);
+parser.add_argument('--lr', type=float, default=0.01, help='learning rate');
+parser.add_argument('--list1', type=list, default=[1,2,3], help='list1');
+parser.add_argument('--list2', type=list, default=['a1','a2','a3'], help='list2');
+
+# Print usage
+parser.print_help();
+print("---------------------");
+
+# Parse argument
+args = parser.parse_args();
+
+# Print args
+print("args:",args);
+print("---------------------");
+print("args.train:%s,type:%s" %(args.train,type(args.train)));
+print("args.val:%s,type:%s" %(args.val,type(args.val)));
+print("args.total:%s,type:%s" %(args.total,type(args.total)));
+print("args.lr:%s,type:%s" %(args.lr,type(args.lr)));
+print("args.list1:%s,type:%s" %(args.list1,type(args.list1)));
+print("args.list2:%s,type:%s" %(args.list2,type(args.list2)));
+

@@ -1,0 +1,125 @@
+安装Docker
+  http://www.runoob.com/docker/ubuntu-docker-install.html
+
+  $sudo apt-get update
+
+  $ wget -qO- https://get.docker.com/ | sh
+hjw@hjw:~$ wget -qO- https://get.docker.com/ | sh
+# Executing docker install script, commit: 4957679
++ sudo -E sh -c apt-get update -qq >/dev/null
++ sudo -E sh -c apt-get install -y -qq apt-transport-https ca-certificates curl >/dev/null
++ sudo -E sh -c curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | apt-key add -qq - >/dev/null
++ sudo -E sh -c echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial edge" > /etc/apt/sources.list.d/docker.list
++ sudo -E sh -c apt-get update -qq >/dev/null
++ sudo -E sh -c apt-get install -y -qq --no-install-recommends docker-ce >/dev/null
++ sudo -E sh -c docker version
+Client:
+ Version:           18.09.1
+ API version:       1.39
+ Go version:        go1.10.6
+ Git commit:        4c52b90
+ Built:             Wed Jan  9 19:35:23 2019
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          18.09.1
+  API version:      1.39 (minimum version 1.12)
+  Go version:       go1.10.6
+  Git commit:       4c52b90
+  Built:            Wed Jan  9 19:02:44 2019
+  OS/Arch:          linux/amd64
+  Experimental:     false
+If you would like to use Docker as a non-root user, you should now consider
+adding your user to the "docker" group with something like:
+
+  sudo usermod -aG docker hjw
+
+Remember that you will have to log out and back in for this to take effect!
+
+WARNING: Adding a user to the "docker" group will grant the ability to run
+         containers which can be used to obtain root privileges on the
+         docker host.
+         Refer to https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
+         for more information.
+  $ sudo usermod -aG docker hjw
+
+  #测试
+  $sudo docker run hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+
+============================================
+安装nvidia-docker
+  https://github.com/NVIDIA/nvidia-docker
+  Quickstart
+
+# If you have nvidia-docker 1.0 installed: we need to remove it and all existing GPU containers
+$docker volume ls -q -f driver=nvidia-docker | xargs -r -I{} -n1 docker ps -q -a -f volume={} | xargs -r docker rm -f
+$sudo apt-get purge -y nvidia-docker
+
+# Add the package repositories
+$curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+  sudo apt-key add -
+$distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+$curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+  sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+$sudo apt-get update
+
+# Install nvidia-docker2 and reload the Docker daemon configuration
+$sudo apt-get install -y nvidia-docker2
+$sudo pkill -SIGHUP dockerd
+
+# Test nvidia-smi with the latest official CUDA image
+$docker run --runtime=nvidia --rm nvidia/cuda:9.0-base nvidia-smi
+
+Unable to find image 'nvidia/cuda:9.0-base' locally
+9.0-base: Pulling from nvidia/cuda
+7b722c1070cd: Pull complete 
+5fbf74db61f1: Pull complete 
+ed41cb72e5c9: Pull complete 
+7ea47a67709e: Pull complete 
+35400734fa04: Pull complete 
+195acf8a5739: Pull complete 
+127028f911f6: Pull complete 
+Digest: sha256:157d05b8a9f3a26dce71c9e824d3fab769d77326f471d0143a236c37d278450d
+Status: Downloaded newer image for nvidia/cuda:9.0-base
+Thu Jan 31 19:39:21 2019       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 384.130                Driver Version: 384.130                   |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 108...  Off  | 00000000:65:00.0  On |                  N/A |
+|  0%   44C    P8    16W / 250W |    446MiB / 11171MiB |      1%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+
+

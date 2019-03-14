@@ -1,0 +1,58 @@
+=========================
+2019-02-21 12:17:09 
+启动脚本：
+    models_master=~/work/MyDL/books_examples/models-master   # models_master 路径
+    work_dir=~/work/MyDL/Tensorflow/docker/tf_master         # 工作目录
+    #rm_exit="--rm"  #推出是否清除
+    #运行镜像
+    docker run -it ${rm_exit} --runtime=nvidia -p 8888:8888 \
+        --mount type=bind,source=$work_dir,target=/root/work \
+        --mount type=bind,source=$models_master,target=/tensorflow/models \
+        tensorflow/tensorflow:latest-devel-gpu-py3
+
+========================
+2019-02-21 12:17:26 
+$apt-get install vim
+
+========================
+2019-02-21 15:56:23 
+修改更新源
+ $sudo gedit /etc/apt/sources.list
+ #在头部添加
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+ $sudo apt-get update
+
+========================
+2019-02-21 15:59:38 
+让PIP源使用国内镜像，提升下载速度和安装成功率。
+永久修改，一劳永逸：
+    Linux下，修改 ~/.pip/pip.conf (没有就创建一个文件夹及文件。文件夹要加“.”，表示是隐藏文件夹)
+内容如下：
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+[install]
+trusted-host=mirrors.aliyun.com
+
+========================
+2019-02-21 16:01:24 
+$jupyter notebook password #123456
+# 启动jupyter notebook服务
+#   jupyter notebook --allow-root
+
+===================================
+*2019-02-21 16:17:23              *
+*容器备份:deeplab_demo.ipynb  OK  *
+* tf_master_v1.tar                *
+===================================
+ 
+
+

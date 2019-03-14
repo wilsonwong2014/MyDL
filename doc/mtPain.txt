@@ -1,0 +1,91 @@
+mtPain帮助
+    http://www.downxia.com/downinfo/188052.html
+快捷方式
+  Ctrl-N            新建图像
+　　Ctrl-O            打开图像
+　　Ctrl-S            保存图像
+　　Ctrl-Shift-S      Save layers file
+　　Ctrl-Q            退出
+　　Ctrl-A            选择整个图像
+　　Esc               取消选择，取消粘贴框
+　　J                 Lasso selection
+　　Ctrl-C            复制选择区对象到剪贴板
+　　Ctrl-X            复制选择区对象到剪贴板并绘制当前图案到所选区域
+　　Ctrl-V            粘贴剪贴板到当前视图中心
+　　Ctrl-K            粘贴剪贴板到它的来源位置
+　　Ctrl-Shift-V      Paste clipboard to new layer
+　　回车键             粘贴到画布
+　　Shift+Enter/Return  Commit paste and swap canvas into the clipboard
+　　方向键             绘画模式 - 移动鼠标指针
+　　方向键             选择模式 - 以一个像素挪动选择框或粘贴框
+　　Shift+方向键       以 x 个像素挪动鼠标指针，选择框或粘贴框 - x 由首选项窗口定义
+　　Ctrl+方向键        移动图层或调整选择框大小
+　　Ctrl+Shift+Arrows  Move layer or resize selection box by x pixels
+　　Enter/Return      Paint Mode - Simulate left click
+　　Backspace         Paint Mode - Simulate right click
+　　[ 或 ]            把颜色 A 改为下一个或前一个调色板项目
+　　Shift+[ 或 ]      把颜色 B 改为下一个或前一个调色板项目
+　　Delete            裁切图像到选择区域
+　　Insert            变换颜色 - 例如亮度，对比度，饱和度，海报化，伽马
+　　Ctrl-G            图像灰度处理
+　　Shift-Ctrl-G      图像灰度处理（伽玛修正）
+　　Ctrl+M            Mirror the image
+　　Shift-Ctrl-I      Invert the image
+　　Ctrl-T            用当前填充在选择区域绘制一个矩形
+　　Ctrl-Shift-T      用当前填充填满选择区域
+　　Ctrl-L            绘制一个椭圆跨越选择区域
+　　Ctrl-Shift-L      绘制一个填充椭圆跨越选择区域
+　　Ctrl-E            编辑颜色 A 和 B 的 RGB 值
+　　Ctrl-W            编辑所有调色板颜色
+　　Ctrl-P            首选项
+　　Ctrl-I            信息
+　　Ctrl-Z            撤销上次操作
+　　Ctrl-R            恢复上一次操作
+　　Shift-T           Text Tool (GTK+)
+　　T                 Text Tool (FreeType)
+　　V                 查看窗口
+　　L                 图层窗口
+　　B                 Toggle Snap to Tile Grid mode
+　　X                 Swap Colours A & B
+　　E                 Choose Colour
+　　A                 使用直线工具时绘制开放箭头（大小由流量设置规定）
+　　S                 使用直线工具时绘制封闭箭头（大小由流量设置规定）
+　　D                 Line Tool
+　　F                 Flood Fill Tool
+　　+,=               主编辑窗口 - 放大
+　　-                 主编辑窗口 - 缩小
+　　Shift +,=         查看窗口 - 放大
+　　Shift -           查看窗口 - 缩小
+　　1                 10% zoom
+　　2                 25% zoom
+　　3                 50% zoom
+　　4                 100% zoom
+　　5                 400% zoom
+　　6                 800% zoom
+　　7                 1200% zoom
+　　8                 1600% zoom
+　　9                 2000% zoom
+　　Shift + 1         编辑图像通道
+　　Shift + 2         编辑透明通道
+　　Shift + 3         编辑选定的通道
+　　Shift + 4         编辑蒙版通道
+　　F1                帮助
+　　F2                选择样式
+　　F3                选择画笔
+　　F4                绘画工具
+　　F5                切换主工具栏
+　　F6                切换工具工具栏
+　　F7                切换设置工具栏
+　　F8                切换调色板
+　　F9                选取工具
+　　F12               切换停靠区
+　　Ctrl + F1 - F12   保存当前剪贴板到文件 1-12
+　　Shift + F1 - F12  从文件 1-12 载入剪贴板
+　　Ctrl + 1, 2, ... , 0 设置不透明度为10%, 20%, ... , 100%（主键盘或小键盘数字键）
+　　Ctrl + + 或 =     增加不透明度 1
+　　Ctrl + -          减少不透明度 1
+　　Home              显示或隐藏主窗口菜单/工具栏/状态栏/调色板
+　　Page Up           缩放图像
+　　Page Down         调整图像画布大小
+　　End               全景窗口
+

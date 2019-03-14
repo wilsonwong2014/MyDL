@@ -1,0 +1,153 @@
+系统环境:技嘉x299 gaming 7 pro / i7 7800k /GTX1080ti
+    http://www.cnblogs.com/tanwc/p/9375161.html
+    http://www.jianshu.com/p/764edaff301e
+1.安装Ubuntu16.06
+   系统下载地址：http://releases.ubuntu.com/16.04/ 
+   下载64位系统：ubuntu-16.04.4-desktop-amd64.iso
+   使用UltraISO制作安装U盘
+2.安装NVIDIA驱动
+2.1 修改更新源
+   $cd /etc/apt
+   $sudo cp sources.list sources.list.bak
+   $sudo gedit sources.list
+   #把下面的这些源添加到sources.list文件头部:
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+   $sudo apt-get update
+   $sudo apt-get upgrade
+
+2.2 驱动下载和安装以及一些问题解决
+   官网地址：https://www.geforce.cn/drivers 或者 https://www.nvidia.cn/Download/index.aspx?lang=cn
+   显卡驱动目前提供的Linux版本最高也就390.77
+   选择CUDA版本:CUDA9.0.76 (Linux x86_64 Driver Version>=384.81)
+   选择cuDNN版本：cuDNN7.0
+  2.2.1.打开终端，先删除旧的驱动：
+    $sudo apt-get purge nvidia*
+
+  2.2.2.禁用自带的 nouveau nvidia驱动
+    2.2.2.1. 先执行下面命令，可以发现会显示一些东西，我们现在要禁用掉，使它不显示出来
+    $lsmod | grep nouveau
+
+    2.2.2.2. 执行以下命令创建一个文件
+    $sudo gedit /etc/modprobe.d/blacklist-nouveau.conf
+
+    2.2.2.3. 并添加如下内容：
+    blacklist nouveau
+    options nouveau modeset=0
+
+    2.2.2.4. 然后保存文件退出，执行下面命令更新一下
+    $sudo update-initramfs -u
+
+    2.2.2.5. 然后重启电脑，重启后打开终端再次输入命令
+    $lsmod | grep nouveau
+        如果发现什么都没显示，那么说明禁用nouveau 成功了，然后开始安装NVIDIA驱动
+    
+    2.2.2.6.首先按Ctrl+Alt+F1进入控制台，然后输入用户名密码登陆(用主键盘)，执行下面命令关闭图形界面
+    $sudo service lightdm stop
+
+
+    2.2.2.7.然后跳转到存放文件的路径再运行安装文件，比如我的文件放在Downloads目录下，命令如下：
+    $cd /home/hjw/d/soft/gtx1080ti/
+    #$sudo sh NVIDIA-Linux-x86_64-390.42.run --no-opengl-files
+    $sudo sh NVIDIA-Linux-x86_64-390.87.run --no-opengl-files
+        后面就一路Accept就可以~报错The distribution-provided pre-install script failed!不必理会，继续安装。
+    最重要的一步，安装程序问你是否使用nv的xconfig文件，这里一点要选yes，否则在启动x-window时不会使用nv驱动。
+
+3.显卡驱动安装
+  3.1. 更新软件源
+  3.2. 
+  ------del begin-------
+  3.1.先删除旧的驱动（如果存在）
+    $sudo apt-get purge nvidia*
+  3.2.禁用自带的nouveau nvidia驱动
+    #先执行下面命令，可以发现会显示一些东西，我们现在要禁用掉，使它不显示出来
+    $lsmod | grep nouveau
+   
+    #执行以下命令创建一个文件
+    $sudo gedit /etc/modprobe.d/blacklist-nouveau.conf
+    #并添加如下内容：
+      blacklist nouveau
+      options nouveau modeset=0
+    #然后保存文件退出，执行下面命令更新一下
+    $sudo update-initramfs -u
+
+    #然后重启电脑，重启后打开终端再次输入命令
+    $lsmod | grep nouveau
+    #如果发现什么都没显示，那么说明禁用nouveau 成功了，然后开始安装NVIDIA驱动
+    #首先按Ctrl+Alt+F1进入控制台，然后输入用户名密码登陆，执行下面命令关闭图形界面
+    $sudo service lightdm stop
+  ------del end-------
+    3.1.首先检测NVIDIA图形卡和推荐的驱动
+    $ubuntu-drivers devices
+    3.2.安装驱动
+    $sudo ubuntu-drivers autoinstall
+    3.3.NVIDIA显卡信息
+    $nvidia-smi
+    3.4.查看gcc版本
+    CUDA 9.0仅支持GCC 6.0及以下版本
+    $cd /usr/bin
+    $ls -l gcc* 
+    lrwxrwxrwx 1 root root      5 10月  6 17:33 gcc -> gcc-5
+    $ls -l g++*
+    lrwxrwxrwx 1 root root      5 10月  6 17:33 g++ -> g++-5
+
+4.安装CUDA9.0
+    $./cuda_9.0.176_384.81_linux.run
+     Do you accept the previously read EULA?
+     accept/decline/quit: accept
+     Install NVIDIA Accelerated Graphics Driver for Linux-x86_64 384.81?
+     (y)es/(n)o/(q)uit: n
+     Install the CUDA 9.0 Toolkit?
+     (y)es/(n)o/(q)uit: y
+     Enter Toolkit Location
+     [ default is /usr/local/cuda-9.0 ]:
+     Do you want to install a symbolic link at /usr/local/cuda?
+     (y)es/(n)o/(q)uit: y
+     Install the CUDA 9.0 Samples?
+     (y)es/(n)o/(q)uit: y
+
+     ....
+     安装完成！
+   
+  添加环境变量： 
+  $sudo gedit ~/.bashrc
+    export PATH=/usr/local/cuda-8.0/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+  $source ~/.bashrc
+
+  验证CUDA9.0是否安装成功
+  $cd /usr/local/cuda-9.0/samples/1_Utilities/deviceQuery
+  $sudo make
+  $./deviceQuery
+  
+  安装补丁
+  $sudo ./cuda_9.0.176.1_linux.run 
+  $sudo ./cuda_9.0.176.2_linux.run 
+  $sudo ./cuda_9.0.176.3_linux.run 
+  $sudo ./cuda_9.0.176.4_linux.run 
+
+5.安装cuDNN7.0
+  $tar -zxvf cudnn-9.0-linux-x64-v7.1.tgz 
+  $sudo cp cuda/include/cudnn.h /usr/local/cuda/include/ 
+  $sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64/ -d 
+  $sudo chmod a+r /usr/local/cuda/include/cudnn.h 
+  $sudo chmod a+r /usr/local/cuda/lib64/libcudnn* 
+  
+  #通过安装以下程序，可以运行 nvv -V查看cuDNN安装情况
+  $apt-get install nvidia-cuda-toolkit
+  $nvcc -V
+
+查看cuda 版本
+cat /usr/local/cuda/version.txt
+查看cudnn 版本
+cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
+
+

@@ -1,0 +1,18 @@
+参考：https://blog.csdn.net/dugudaibo/article/details/77961836
+
+一、引入Tensorboard
+    from keras.callbacks import TensorBoard
+
+二、设置fit回调函数，并设置日志目录
+    model.fit(x_train, y_train,
+          epochs=20,
+          batch_size=128,
+          callbacks=[TensorBoard(log_dir='tb/classes_mlp')])
+
+三、启动Tensorboard
+    tensorboard --logdir=tb/classes_mlp
+
+四、浏览器打开Tensorboard
+    http://localhost:6006
+
+

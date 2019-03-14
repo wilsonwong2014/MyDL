@@ -1,0 +1,10 @@
+.
+./sample_comp_dir
+./sample_comp_dir/documentation
+./sample_comp_dir/EDA
+./sample_comp_dir/code
+./sample_comp_dir/logs
+./sample_comp_dir/submissions
+./sample_comp_dir/data
+./sample_comp_dir/data/raw
+./sample_comp_dir/data/processed

@@ -1,0 +1,23 @@
+Tensorflow官网
+   https://tensorflow.google.cn/
+
+安装pip3
+  $sudo apt-get install python3-pip
+
+安装virtualenv
+  $sudo apt-get install virtualenv
+
+安装tensorflow
+  $sudo pip3 install tensorflow
+  $sudo pip3 install tensorflow-gpu
+
+numpy官网
+  http://www.numpy.org/
+  安装
+  $sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
+
+keras官网
+  https://keras.io
+  安装
+  $sudo pip3 install keras
+

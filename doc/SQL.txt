@@ -1,0 +1,5 @@
+批量替换字段字符
+  update tablename set field=replace(field,oldstr,newstr);
+查询前面几行
+  select * from data limit 10;
+

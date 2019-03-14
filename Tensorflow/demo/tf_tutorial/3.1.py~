@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# #### 1. 定义两个不同的图
+
+# In[1]:
+print("demo 3.1-1");
+import tensorflow as tf
+#计算图1
+g1 = tf.Graph();
+with g1.as_default():
+    #定义变量并设置初值
+    v = tf.get_variable("v", [1], initializer = tf.zeros_initializer()) # 设置初始值为0
+#计算图2
+g2 = tf.Graph();
+with g2.as_default():
+    #定义变量并设置初值
+    v = tf.get_variable("v", [1], initializer = tf.ones_initializer())  # 设置初始值为1
+
+print("demo 3.1-2");
+#会话设置计算图1    
+with tf.Session(graph = g1) as sess:
+    print("demo 3.1-2-1");
+    #初始化所有变量,xxxx.run()相当于sess.run(xxxx);
+    tf.global_variables_initializer().run();
+    print("demo 3.1-2-2");
+    with tf.variable_scope("", reuse=True):
+        print("demo 3.1-2-3");
+        print(sess.run(tf.get_variable("v")));
+        print("demo 3.1-2-4");
+
+print("demo 3.1-2-5");
+#会话设置计算图2
+with tf.Session(graph = g2) as sess:
+    tf.global_variables_initializer().run();
+    with tf.variable_scope("", reuse=True):
+        print(sess.run(tf.get_variable("v")));
+
+print("demo 3.1-3");
+# #### 2. 张量的概念
+# In[2]:
+import tensorflow as tf
+a = tf.constant([1.0, 2.0], name="a");
+b = tf.constant([2.0, 3.0], name="b");
+result = a + b;
+print (result);
+
+print("demo 3.1-4");
+sess = tf.InteractiveSession ();
+print(result.eval());
+sess.close();
+
+# #### 3. 会话的使用
+# 3.1 创建和关闭会话
+# In[3]:
+# 创建一个会话。
+sess = tf.Session();
+print("demo 3.1-5");
+
+# 使用会话得到之前计算的结果。
+print(sess.run(result));
+print("demo 3.1-6");
+# 关闭会话使得本次运行中使用到的资源可以被释放。
+sess.close()
+
+
+# 3.2 使用with statement 来创建会话
+# In[4]:
+with tf.Session() as sess:
+    print(sess.run(result));
+
+print("demo 3.1-7");
+# 3.3 指定默认会话
+# In[5]:
+sess = tf.Session();
+with sess.as_default():
+     print(result.eval());
+
+print("demo 3.1-8");
+# In[6]:
+sess = tf.Session();
+
+# 下面的两个命令有相同的功能。
+print(sess.run(result))
+print(result.eval(session=sess))
+print("demo 3.1-9");
+
+# #### 4. 使用tf.InteractiveSession构建会话
+# In[7]:
+sess = tf.InteractiveSession ();
+print(result.eval());
+sess.close();
+print("demo 3.1-10");
+
+# #### 5. 通过ConfigProto配置会话
+# In[8]:
+config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True);
+sess1 = tf.InteractiveSession(config=config);
+sess2 = tf.Session(config=config);
+print("demo 3.1-11");
+

@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+''' 把ipynb格式文件转换为py格式文件
+ 遍历文件夹,搜索*.ipynb,在源目录转换为*.py
+
+    使用范例:
+        $python3 CvtIpynb2py.py /path
+'''
+
+import os
+import sys;
+
+def TravePath(path):
+    '''遍历文件夹,搜索*.ipynb文件,在源目录转换为*.py
+    @param path:搜索目录
+    '''
+    allfilelist=os.listdir(path);
+    for file in allfilelist:
+        filepath=os.path.join(path,file);
+        #判断是不是文件夹
+        if os.path.isdir(filepath):
+            TravePath(filepath);
+        else:
+            #解析文件
+            [sBaseName,sExtName]=os.path.splitext(filepath);
+            #已转换的不处理，不是ipynb文件不处理
+            sPyFile = sBaseName+".py";
+            if sExtName==".ipynb" :
+                if(not os.path.exists(sPyFile)):
+                    #os.system("ls %s" %filepath.replace(" ","\\ "));
+                    os.system("jupyter nbconvert --to script %s" %filepath.replace(" ","\\ "));
+
+
+if __name__ == '__main__':
+    if len(sys.argv)==2:
+        TravePath(sys.argv[1]);
+    else:
+        print("Usage: demo_travpath.py /path");
+
+

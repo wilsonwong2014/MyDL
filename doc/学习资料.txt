@@ -1,0 +1,401 @@
+IPython3时代到来
+    https://www.jianshu.com/p/9a82e84705ed
+
+从零开始配置深度学习服务器Ubuntu16.04+CUDA8.0+Tensorflow1.4.1
+   https://zhuanlan.zhihu.com/p/32185946
+
+通天塔：论文翻译网站
+    http://tongtianta.site
+Tensorflow官网
+   http://tensorflow.google.cn
+   https://www.w3cschool.cn/tensorflow_python/
+filterpy
+    源码项目
+    https://github.com/rlabbe/filterpy
+    帮助文档
+    https://filterpy.readthedocs.io/en/latest/
+numpy官网
+   http://www.numpy.org
+keras官网
+    https://keras.io/
+    https://keras.io/zh/
+keras中文教程
+  https://keras-cn.readthedocs.io/en/latest/
+python opencv
+  https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_tutorials.html
+pandas中文教程
+  https://apachecn.github.io/pandas-doc-zh/
+  (API)
+  https://apachecn.github.io/pandas-doc-zh/api.html
+pandas.pdf
+  http://vdisk.weibo.com/s/aK8h8G1KA09CI?category_id=0...ref
+SQLite3命令操作大全
+    https://www.cnblogs.com/hbtmwangjin/p/7941403.html
+matplotlib
+    https://matplotlib.org/api/pyplot_summary.html
+scikit-learn 0.18 中文文档
+    http://cwiki.apachecn.org/pages/viewpage.action?pageId=10030181
+
+scikit-image
+    官网
+    https://scikit-image.org/docs/dev/user_guide
+    中文手册
+    https://cloud.tencent.com/developer/section/1414649
+
+hdf5官网教程
+    http://docs.h5py.org/en/stable/quick.html
+
+最新论文发表：
+    https://arxiv.org
+
+真实机下 ubuntu 18.04 安装GPU +CUDA+cuDNN 以及其版本选择（亲测非常实用）
+   https://blog.csdn.net/u010801439/article/details/80483036
+
+廖雪峰官网
+   https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001432712108300322c61f256c74803b43bfd65c6f8d0d0000  
+
+推荐一些相见恨晚的 Python 库 「一」
+    https://www.cnblogs.com/lrheisoo/p/7357207.html
+Python资源大全，让你相见恨晚的Python库！
+    https://baijiahao.baidu.com/s?id=1592287462244734552&wfr=spider&for=pc
+
+
+算法的时间复杂度和空间复杂度计算
+  https://blog.csdn.net/daijin888888/article/details/66970902
+
+在线电子书转换器(epub=>pdf ,etc...)
+    http://cn.epubee.com
+技术向：一文读懂卷积神经网络CNN
+    https://www.cnblogs.com/nsnow/p/4562308.html
+一文搞懂LSTM 网络
+    https://blog.csdn.net/zchang81/article/details/75513087
+LSTM算法原理简介及Tutorial
+    https://blog.csdn.net/xuanyuansen/article/details/61913886?utm_source=blogxgwz1
+如何基于Keras和Tensorflow用LSTM进行时间序列预测
+    http://www.elecfans.com/d/770833.html
+深入浅出的TensorFlow可视化工具TensorBoard用法教程
+    https://blog.csdn.net/gg_18826075157/article/details/78440766
+CIFAR数据集
+    https://www.cnblogs.com/cloud-ken/p/8456878.html
+    http://www.cs.toronto.edu/~kriz/cifar.html
+keras实现常用深度学习模型LeNet，AlexNet，ZFNet，VGGNet，GoogleNet，Resnet
+    https://blog.csdn.net/wang1127248268/article/details/77258055/
+使用keras版本的yoloV3训练并在VOC数据集上测试
+    https://blog.csdn.net/yuhq3/article/details/80281929
+
+KERAS-YOLOV3的代码走读
+    https://blog.csdn.net/yangchengtest/article/details/80664415
+    https://zhuanlan.zhihu.com/p/34945787
+【Tensorflow tf 掏粪记录】笔记五——YOLOv3 tensorflow 实现
+    https://blog.csdn.net/IronMastiff/article/details/79940118
+    https://github.com/IronMastiff/YOLOv3_tensorflow
+
+keras-yolo3源码下载
+    https://github.com/qqwweee/keras-yolo3
+
+Resnet_50网络结构详解
+    https://blog.csdn.net/Seven_year_Promise/article/details/69360488?utm_source=blogxgwz0
+机器学习(7) PASCAL VOC2012数据集
+    https://blog.csdn.net/gzhermit/article/details/75729885
+
+GIMP：Ubuntu下功能强大的开源Photoshop[组图]
+
+tensorflow读取数据-tfrecord格式
+    https://blog.csdn.net/happyhorizion/article/details/77894055
+
+python基础教程/json
+    http://www.runoob.com/python/python-json.html
+
+htop使用详解
+    https://www.cnblogs.com/yqsun/p/5396363.html
+
+keras-team---学习资料
+    https://github.com/keras-team/
+keras github
+    https://github.com/keras-team/keras
+
+Tensorboard
+    https://github.com/tensorflow/tensorboard
+    https://www.tensorflow.org/guide/summaries_and_tensorboard
+    https://www.tensorflow.org/guide/graph_viz
+    https://github.com/tensorflow/tensorboard/tree/master/tensorboard
+
+    
+Python format 格式化函数
+    http://www.runoob.com/python/att-string-format.html
+
+用tf.data.dataset构建input pipline
+    https://blog.csdn.net/neu_chenguangq/article/details/79590537
+Python format 格式化函数
+    http://www.runoob.com/python/att-string-format.html
+
+TensorFlow可视化学习之tf.summary模块的使用说明
+    https://www.2cto.com/kf/201805/746214.html
+
+visualization of filters keras 基于Keras的卷积神经网络（CNN）可视化
+    http://www.cnblogs.com/bnuvincent/p/9612686.html
+    https://github.com/fchollet/deep-learning-with-python-notebooks   -----项目源码
+    https://adeshpande3.github.io/adeshpande3.github.io/
+
+OpenCV 3计算机视觉 (第二版) 源码
+   https://github.com/techfort/pycv
+
+机器学习与神经网络（四）：BP神经网络的介绍和Python代码实现
+    https://blog.csdn.net/huakai16/article/details/77479127
+
+Jupyter Notebook 的快捷键
+    https://blog.csdn.net/lawme/article/details/51034543
+
+国家数据(国家统计局)
+    http://data.stats.gov.cn/easyquery.htm?cn=A01
+
+美国统计局
+    https://www.bls.gov/bls/newsrels.htm
+非农数据
+    http://www.feinongdata.com/rili/
+
+yolo论文
+    v1:
+    https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf
+    https://www.cnblogs.com/CZiFan/p/9516504.html
+    v2:
+    https://arxiv.org/pdf/1612.08242.pdf
+    https://blog.csdn.net/weixin_35654926/article/details/72473024
+    v3:
+    https://pjreddie.com/media/files/papers/YOLOv3.pdf
+    https://zhuanlan.zhihu.com/p/35023499
+
+性能指标（模型评估）之mAP
+    https://blog.csdn.net/u014203453/article/details/77598997
+
+多标签分类（multilabel classification ）
+    所谓的单标签分类指的是最终的结果为多类中选择得分最高的一类进行输出，之所以叫单标签
+    https://blog.csdn.net/bemachine/article/details/10471383
+
+机器学习中什么是端到端的学习（end-to-end learning）？
+    https://blog.csdn.net/cs24k1993/article/details/79118460
+
+数学专业英语词汇 
+    https://wenku.baidu.com/view/4516b0135f0e7cd184253609.html
+
+深度学习图像标注工具汇总
+    https://blog.csdn.net/chaipp0607/article/details/79036312
+
+ImagePy
+    http://www.dxy.cn/bbs/topic/37796687
+
+geatpy遗传算法库
+    https://github.com/geatpy-dev/geatpy
+
+Python Treelib 多叉树 数据结构 中文使用帮助文档
+    https://blog.csdn.net/kalbertlee/article/details/70158015
+
+周志华机器学习 西瓜书（PDF） 斯坦福大学机器/深度学习视频 机器学习基石+技法 NLP
+    https://blog.csdn.net/q361239731/article/details/81012904
+
+
+git教程
+    https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
+
+Linux 教程
+    http://www.runoob.com/linux/linux-tutorial.html
+
+Docker教程
+    http://www.runoob.com/docker/docker-tutorial.html
+Docker — 从入门到实践
+    https://yeasy.gitbooks.io/docker_practice/content/
+
+curl 命令详解~~
+    https://www.cnblogs.com/guixiaoming/p/8507268.html
+
+一文读懂卷积神经网络中的1x1卷积核
+    https://cloud.tencent.com/developer/article/1162526
+
+深度学习之GoogLeNet解读
+    https://blog.csdn.net/qq_31531635/article/details/72232651
+
+PYTHON自然语言处理中文翻译 NLTK 中文版.pdf
+    http://vdisk.weibo.com/s/FSRbc
+
+WordNet
+    http://www.nltk.org
+    
+    用WordNet实现中文情感分析
+    https://blog.csdn.net/xieyan0811/article/details/62056558
+    2)  中英文翻译：wordnet汉语开放词网，可从以下网址下载：
+        http://compling.hss.ntu.edu.sg/cow/
+
+网络分析之networkx
+    http://www.bubuko.com/infodetail-1718433.html
+
+数据结构与算法库
+    https://github.com/keon/algorithms
+==========================================
+数据增强
+    【技术综述】 一文道尽深度学习中的数据增强方法（上）
+    https://www.jianshu.com/p/99450dbdadcf
+    空间几何变换类（翻转，裁剪，旋转，缩放变形，仿射多重操作），图像模糊，HSV对比度变换
+
+===========================================
+卡尔曼滤波器
+
+===========================================
+度量学习
+    Metric Learning——度量学习
+    https://blog.csdn.net/gdengden/article/details/82715162
+
+    SIMPLE ONLINE AND REALTIME TRACKING WITH A DEEP ASSOCIATION METRIC
+    https://arxiv.org/abs/1703.07402
+
+    度量学习（metric learning）损失函数
+    https://blog.csdn.net/cheneykl/article/details/80292794
+
+    【论文推荐】最新5篇度量学习（Metric Learning）相关论文—人脸验证、BIER、自适应图卷积、注意力机制、单次学习
+    https://cloud.tencent.com/developer/article/1096660
+
+    Online Deep Metric Learning
+    在线深度指标学习
+    http://tongtianta.site/paper/966
+
+    Deep Metric Learning for Person Re-Identification
+    人员重新识别的深度度量学习
+    http://tongtianta.site/paper/11525
+    
+    metric-learn
+    https://github.com/metric-learn/metric-learn
+    官网教程：http://metric-learn.github.io/metric-learn/
+
+    cosine_metric_learning
+    https://github.com/nwojke/cosine_metric_learning    
+
+    metric learn ( python)
+    https://github.com/Qidian213/deep_sort_yolov3/blob/master/demo.py
+
+===========================================
+经典网络
+LeNet:网络解析（一）：LeNet-5详解
+    https://cuijiahua.com/blog/2018/01/dl_3.html
+AlexNet:AlexNet 网络详解及Tensorflow实现源码
+    https://blog.csdn.net/op07p6aaqo9u71/article/details/78295819
+    https://github.com/stephen-v/tensorflow_alexnet_classify
+
+===========================================
+股票预测：stock-forecasting
+    项目源码：
+    https://github.com/saradindusengupta/stock-forecasting
+    数据：
+    https://www.kaggle.com/souravroy1/stock-market-data/data
+
+==========================================
+利用深度学习来与测股票价格变动
+    http://www.360doc.com/content/19/0112/18/410279_808412489.shtml
+    https://www.cnblogs.com/changbaishan/p/10266395.html
+    
+======================================================
+图像分割
+    源码：DeepLab=>https://github.com/tensorflow/models/tree/master/research/deeplab)
+
+    deeplabV3+源码分解学习
+    https://www.jianshu.com/p/d0cc35b3f100
+    
+    Encoder-Decoder with Atrous Separable Convolution for Semantic Image Segmentation
+    -----------------------------------------
+    deeplab相关论文
+    Encoder-Decoder_with_Atrous_Separable_Convolution_for_Semantic_Image_Segmentation
+    https://arxiv.org/abs/1802.02611
+    中文翻译：http://tongtianta.site/paper/3269
+
+    Rethinking_Atrous_Convolution_for_Semantic_Image_Segmentation
+    https://arxiv.org/abs/1706.05587
+
+    DeepLab__Semantic_Image_Segmentation_with_Deep_Convolutional_Nets, Atrous_Convolution,and_Fully_Connected_CRFs
+    https://arxiv.org/abs/1606.00915
+
+    SEMANTIC_IMAGE_SEGMENTATION_WITH_DEEP_CON-VOLUTIONAL_NETS_AND_FULLY_CONNECTED_CRFS
+    https://arxiv.org/abs/1412.7062
+    
+    DeepLabv3+：语义分割领域的新高峰 
+    http://www.sohu.com/a/224351199_500659
+
+    ----------------------
+    反卷积
+    Tensorflow卷积与反卷积（目前看到的最详细的解释）
+    https://blog.csdn.net/gubenpeiyuan/article/details/81266155
+
+    卷积与反卷积
+    https://blog.csdn.net/liumingchun13/article/details/78722347
+
+    ---------------------    
+    空洞卷积网络
+
+    ---------------------
+    全卷积网络 FCN
+    全卷积网络 FCN 详解
+    https://www.cnblogs.com/gujianhan/p/6030639.html
+
+    --------------------
+    编码-解码
+
+    空间金字塔
+
+
+======================================================
+目标跟踪（deep_sort=>https://github.com/nwojke/deep_sort）
+    精灵助手：视频标注工具
+    http://www.colabeler.com/
+    ------------------------------------
+    数据集
+    https://motchallenge.net/data/MOT16/
+    MOT17数据集说明
+    https://blog.csdn.net/zxtalentwolf/article/details/80322868
+
+    多目标跟踪-MOT16数据集格式介绍
+    https://blog.csdn.net/yuanlulu/article/details/79818599
+
+    【论文笔记】MOT16 A Benchmark for Multi-Object Tracking数据集介绍
+    https://blog.csdn.net/sinat_17196995/article/details/57946708
+    ------------------------------------
+    深度学习在目标跟踪中的应用
+    http://www.dataguru.cn/article-9863-1.html
+    ----------------------------
+    abhineet123/Deep-Learning-for-Tracking-and-Detection
+    https://github.com/abhineet123/Deep-Learning-for-Tracking-and-Detection
+    ----------------------------
+    DrewNF/Tensorflow_Object_Tracking_Video
+    https://github.com/DrewNF/Tensorflow_Object_Tracking_Video
+    ----------------------------
+    基于深度学习的视频检测（三） 目标跟踪
+    https://blog.csdn.net/qq_23225317/article/details/78810938?utm_source=blogxgwz0
+
+    bendidi/Tracking-with-darkflow
+    https://github.com/bendidi/Tracking-with-darkflow
+
+    thtrieu/darkflow
+    https://github.com/thtrieu/darkflow
+    
+    SORT
+    https://github.com/abewley/sort
+
+    nwojke/deep_sort
+    https://github.com/nwojke/deep_sort
+
+    Qidian213/deep_sort_yolov3
+    https://github.com/Qidian213/deep_sort_yolov3
+
+    YOLOv3目标检测、卡尔曼滤波、匈牙利匹配算法多目标追踪
+    https://blog.csdn.net/xiao__run/article/details/84374959
+
+    DeepSort论文学习
+    https://blog.csdn.net/cdknight_happy/article/details/79731981
+
+    论文翻译：Deep SORT: Simple Online and Realtime Tracking with a Deep Association Metric
+    https://blog.csdn.net/zjc910997316/article/details/83721573
+
+    多目标跟踪：Simple Online and Realtime Tracking with a Deep Association Metric 2017 (deep-sort)
+    https://blog.csdn.net/yuhq3/article/details/78857614
+
+    基于YOLOv3和deep_sort的多目标跟踪
+    https://blog.csdn.net/weixin_42755375/article/details/85723239
+    ----------------------------
+    [AI开发]基于深度学习的视频多目标跟踪实现
+    https://www.cnblogs.com/xiaozhi_5638/p/9376784.html

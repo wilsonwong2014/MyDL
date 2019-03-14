@@ -1,0 +1,28 @@
+OpenCV
+  官网
+    http://www.opencv.org
+  源码&contrib下载
+    https://github.com/opencv/
+  源码安装OpenCV
+    $mkdir build
+    $cd build
+    $cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_EXAMPLES=ON ..
+    $make 
+    $make install
+  源码安装contrib
+    $ cd <opencv_build_directory>
+    $ cmake -DOPENCV_EXTRA_MODULES_PATH=<opencv_contrib>/modules -DBUILD_EXAMPLES=ON <opencv_source_directory>
+    $ make -j5
+    $make install
+
+编译失败！
+[ 82%] Building CXX object modules/xfeatures2d/CMakeFiles/opencv_xfeatures2d.dir/src/vgg.cpp.o
+/home/hjw/platform/opencv-master/opencv_contrib-master/modules/xfeatures2d/src/vgg.cpp:497:40: fatal error: vgg_generated_80.i: 没有那个文件或目录
+compilation terminated.
+modules/xfeatures2d/CMakeFiles/opencv_xfeatures2d.dir/build.make:115: recipe for target 'modules/xfeatures2d/CMakeFiles/opencv_xfeatures2d.dir/src/vgg.cpp.o' failed
+make[2]: *** [modules/xfeatures2d/CMakeFiles/opencv_xfeatures2d.dir/src/vgg.cpp.o] Error 1
+CMakeFiles/Makefile2:18107: recipe for target 'modules/xfeatures2d/CMakeFiles/opencv_xfeatures2d.dir/all' failed
+make[1]: *** [modules/xfeatures2d/CMakeFiles/opencv_xfeatures2d.dir/all] Error 2
+Makefile:160: recipe for target 'all' failed
+make: *** [all] Error 2
+

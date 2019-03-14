@@ -1,0 +1,268 @@
+磁盘挂载
+  编辑 /etc/fstab
+  UUID=xxxxxxxxxxx  /home/xxx  ext4  defaults 1  2    
+  
+  UUID 可以由 fdisk -l 查看
+
+查看OpenCV安装版本
+  $pkg-config --modversion opencv
+
+
+Ubuntu16.04下实时监控CPU/GPU内存的使用情况
+    https://blog.csdn.net/u012229282/article/details/79582089 
+    在程序的运行过程中，我们要实时监控机器的CPU/GPU的内存的使用情况。下面说一下如何实时监控：
+    1、CPU内存监控
+    （1）$ top
+    （2）htop，首先要安装htop
+        $ sudo apt-get install htop
+        $ htop
+    2、GPU内存使用情况
+    （1）单次查看
+        $ nvidia-smi
+    （2）实时监控，将上面的命令配合watch使用，使其每秒钟刷新一次。
+        $ watch -n 1 nvidia-smi
+
+Python模块搜索路径代码详解
+    https://www.jb51.net/article/133925.htm
+    1.动态增加路径
+    通过 sys 模块的 append() 方法在 Python 环境中增加搜索路径：
+        >>> import sys
+        >>> sys.path.append('/home/wang/workspace')
+    2.修改 PYTHONPATH 变量
+    打开并编辑 bashrc：
+        $ vim ~/.bashrc
+        将以下内容附加到文件末尾：
+            export PYTHONPATH=$PYTHONPATH:/home/wang/workspace
+        $ source ~/.bashrc
+    3.增加 .pth 文件
+    在 /usr/local/lib/python3.5/dist-packages 下添加一个扩展名为 .pth 的配置文件（例如：extras.pth），内容为要添加的路径：
+        /home/wang/workspace
+
+
+
+Chrome: ERR_EMPTY_RESPONSE 
+    https://productforums.google.com/forum/#!topic/chrome/WyPTJ2jFZIg
+    chrome 的 Proxy-SwitchyOmega_v2.3.16.crx 与 tensorboard冲突，删除Proxy-SwitchyOmega_v2.3.16.crx恢复正常
+
+tf.layers.dense
+    tf.layers.dense构建全链接网络层
+    tf.layers.dense(
+        inputs,   #输入网络数据[首层输入]，后续层为前一层的输出
+        units,    #输出节点数  
+        activation=None,
+        use_bias=True,
+        kernel_initializer=None,
+        bias_initializer=tf.zeros_initializer(),
+        kernel_regularizer=None,
+        bias_regularizer=None,
+        activity_regularizer=None,
+        kernel_constraint=None,
+        bias_constraint=None,
+        trainable=True,
+        name=None,
+        reuse=None
+    )
+    范例:
+    input_data=tf.placeholder(shape=(None,2),dtype=tf.float32)
+    layer1=tf.layers.dense(inputs=input_data,units=3)
+    layer1.get_shape()#输出矩阵=>(None,3)
+    数据表示：
+        输入：
+        a1_1,a1_2
+        a2_1,a2_2
+        a3_1,a3_2
+        ....
+        an_1,an_2
+        权重：
+        w1_1,w1_2,w1_3
+        w2_1,w2_2,w2_3
+        输出：
+        o1_1=a1_1*w1_1+a1_2*w2_1, o1_2=a1_1*w1_2+a1_2*w2_2, a1_3=a1_1*w1_3+a1_2*w2_3
+        o2_1=a2_1*w1_1+a2_2*w2_1, o2_2=a2_1*w1_2+a2_2*w2_2, a2_3=a2_1*w1_3+a2_2*w2_3
+        o3_1=a3_1*w1_1+a3_2*w2_1, o3_2=a3_1*w1_2+a3_2*w2_2, a3_3=a3_1*w1_3+a3_2*w2_3
+        ............................................................................
+        on_1=an_1*w1_1+an_2*w2_1, on_2=an_1*w1_2+an_2*w2_2, an_3=an_1*w1_3+an_2*w2_3
+        输出矩阵形状:(n,3)
+
+
+------------------------
+tf.one_hot(val,num_class) 实现 keras.utils.to_categorical(val, num_class) 相同功能
+    tf.one_hot(8,10).eval() #=> array([0., 0., 0., 0., 0., 0., 0., 0., 1., 0.], dtype=float32)
+
+===============================
+17/11/2018 21:31:45 
+电脑端突然读不到SD卡的DCIM文件夹
+    是由于多媒体数据库被损坏导致。
+    进入“设置 > 应用管理 > 菜单> 显示系统进程”，在列表中找到“媒体存储”，点击“存储 > 删除数据”，然后重启手机。
+
+==============================
+Linux搭建 fastDFS与nginx 从入门到上天
+    https://blog.csdn.net/qq_20804323/article/details/83244090
+
+
+=============================
+18/11/2018 14:30:38 
+python简单搭建HTTP Web服务器
+    https://www.cnblogs.com/klchang/p/6009195.html
+对于Python 2，简单搭建Web服务器，只需在需要搭建Web服务器的目录（如C:/ 或 /home/klchang/）下，输入如下命令：
+    python -m SimpleHTTPServer 8080
+    含义为使用 8080端口的创建Web服务器，可以使用浏览器 http://127.0.0.1:8080 或 将 127.0.0.1 替换为本机的外部IP地址，进行访问。
+对于Python 3，其创建Web服务器的等价命令，如下：
+    python3 -m http.server 8080
+
+
+============================
+09/12/2018 20:45:16 
+机器学习中什么是端到端的学习（end-to-end learning）？
+    相对于深度学习，传统机器学习的流程往往由多个独立的模块组成，比如在一个典型的自然语言处理（Natural Language Processing）问题中，包括分词、词性标注、句法分析、语义分析等多个独立步骤，每个步骤是一个独立的任务，其结果的好坏会影响到下一步骤，从而影响整个训练的结果，这是非端到端的。
+    而深度学习模型在训练过程中，从输入端（输入数据）到输出端会得到一个预测结果，与真实结果相比较会得到一个误差，这个误差会在模型中的每一层传递（反向传播），每一层的表示都会根据这个误差来做调整，直到模型收敛或达到预期的效果才结束，这是端到端的。
+    两者相比，端到端的学习省去了在每一个独立学习任务执行之前所做的数据标注，为样本做标注的代价是昂贵的、易出错的。
+作者：张旗
+链接：https://www.zhihu.com/question/50454339/answer/257372299
+来源：知乎
+著作权归作者所有，转载请联系作者获得授权。
+
+===============================
+zip加密解密压缩
+    zip -rP passwork filename.zip filename  passwork是要输入的密码
+    unzip -P passwork filename.zip passwork是要解压的密码，这个不会有提示输入密码的操作
+
+===============================
+截屏（全屏）:PrintScreen
+选取区域：  Shift + PrintScreen => 鼠标编程十字，选取区域后松开=>显示保存框
+
+==============================
+解决Ubuntu系统启动出现黑屏及光标闪动现象
+    https://blog.csdn.net/guoyunlei/article/details/80012227?utm_source=blogxgwz8
+问问题描述
+    发生时间：2018年4月5日
+    系统版本：Ubuntu16.04和win10双系统
+    安装方法：完完全全按照百度经验进行安装
+    问题描述：安装完成重启之后，出现了黑屏现象，而且屏幕左上角一直有白色光标闪动，等了很久没有变化。
+解决方法
+1、将刚刚安装系统用过的Ubuntu启动盘插在电脑上，电脑开机，从这个启动盘启动，方法和安装系统时一样；
+2、这次不是选在安装Ubuntu，而是选择试用Ubuntu；
+3、进入Ubuntu之后，Ctrl+Alt+T 打开一个终端；
+4、输入如下命令：
+    fdisk -l     //找到你的Ubuntu安装分区（boot），以下假设为/dev/sda3
+    sudo mount /dev/sda3 /mnt
+    sudo grub-install --boot-directory=/mnt/ dev/sda      //注意dev前面有空格,如果是sda3就填sda,如果是sdb3就填sdb
+
+    sudo mount /dev/nvme0n1p1 /mnt
+    sudo grub-install --boot-directory=/mnt/ /dev/nvme0n1p1
+
+================================
+VPN解决方案1
+ 1.采用枫叶主机方案(官网教程):执行 ~/vpn/electron-ssr-0.2.3-x86_64.AppImage
+ 2.Firefox禁用代理：首选项=>网络代理设置=>不使用代理服务器
+ 3.chrom设置代理：Proxy SwitchyOmega
+    规则列表网址：https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
+
+VPN解决方案2
+  用配置好的snap覆盖
+
+================================
+hjw@hjw:~$ python3
+Python 3.5.2 (default, Nov 12 2018, 13:43:14) 
+[GCC 5.4.0 20160609] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import tensorflow as tf
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/usr/local/lib/python3.5/dist-packages/tensorflow/__init__.py", line 22, in <module>
+    from tensorflow.python import pywrap_tensorflow  # pylint: disable=unused-import
+  File "/usr/local/lib/python3.5/dist-packages/tensorflow/python/__init__.py", line 52, in <module>
+    from tensorflow.core.framework.graph_pb2 import *
+  File "/usr/local/lib/python3.5/dist-packages/tensorflow/core/framework/graph_pb2.py", line 6, in <module>
+    from google.protobuf import descriptor as _descriptor
+  File "/usr/local/lib/python3.5/dist-packages/google/protobuf/__init__.py", line 37, in <module>
+    __import__('pkg_resources').declare_namespace(__name__)
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2927, in <module>
+    @_call_aside
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2913, in _call_aside
+    f(*args, **kwargs)
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2952, in _initialize_master_working_set
+    add_activation_listener(lambda dist: dist.activate())
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 956, in subscribe
+    callback(dist)
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2952, in <lambda>
+    add_activation_listener(lambda dist: dist.activate())
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2515, in activate
+    declare_namespace(pkg)
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2097, in declare_namespace
+    _handle_ns(packageName, path_item)
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2047, in _handle_ns
+    _rebuild_mod_path(path, packageName, module)
+  File "/usr/lib/python3/dist-packages/pkg_resources/__init__.py", line 2066, in _rebuild_mod_path
+    orig_path.sort(key=position_in_sys_path)
+AttributeError: '_NamespacePath' object has no attribute 'sort'
+
+
+解决方法：
+    https://blog.csdn.net/zhipeng_hou/article/details/79429759
+    重新安装 setuptools-38.5.1.zip
+
+
+==========================================
+利用chown改变所有者：
+    对Document/ 目录下的所有文件与子目录执行相同的所有者变更，修改所有者为users用户组的username用户
+    chown -R username:users Document/
+
+
+==========================================
+让PIP源使用国内镜像，提升下载速度和安装成功率。
+    https://www.cnblogs.com/microman/p/6107879.html
+对于Python开发用户来讲，PIP安装软件包是家常便饭。但国外的源下载速度实在太慢，浪费时间。而且经常出现下载后安装出错问题。所以把PIP安装源替换成国内镜像，可以大幅提升下载速度，还可以提高安装成功率。
+国内源：
+    新版ubuntu要求使用https源，要注意。
+清华：https://pypi.tuna.tsinghua.edu.cn/simple
+阿里云：http://mirrors.aliyun.com/pypi/simple/
+中国科技大学 https://pypi.mirrors.ustc.edu.cn/simple/
+华中理工大学：http://pypi.hustunique.com/
+山东理工大学：http://pypi.sdutlinux.org/ 
+豆瓣：http://pypi.douban.com/simple/
+临时使用：
+    可以在使用pip的时候加参数-i https://pypi.tuna.tsinghua.edu.cn/simple
+    例如：pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pyspider，这样就会从清华这边的镜像去安装pyspider库。
+
+永久修改，一劳永逸：
+    Linux下，修改 ~/.pip/pip.conf (没有就创建一个文件夹及文件。文件夹要加“.”，表示是隐藏文件夹)
+内容如下：
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+[install]
+trusted-host=mirrors.aliyun.com
+
+==========================================
+远程访问jupyter notebook
+    https://www.cnblogs.com/yangxiaolan/p/5778305.html
+
+===================
+ls只显示隐藏文件
+    $ls -AF|grep '^\.'
+
+===================
+查询软件可按装版本
+apt-cache policy gdb
+gdb:
+  Installed: 7.7.1-0ubuntu5~14.04.2
+  Candidate: 7.7.1-0ubuntu5~14.04.2
+  Version table:
+ *** 7.7.1-0ubuntu5~14.04.2 0
+http://fr.archive.ubuntu.com/ubuntu/ trusty-updates/main amd64 Packages
+/var/lib/dpkg/status
+     7.7-0ubuntu3 0
+http://fr.archive.ubuntu.com/ubuntu/ trusty/main amd64 Packages
+http://archive.ubuntu.com/ubuntu/ trusty/main amd64 Packages
+
+
+===============================
+2019-03-07 22:41:24 
+keras下载数据路径问题
+    https://github.com/keras-team/keras/blob/master/keras/utils/data_utils.py/#L123
+    详细查看 get_file()源码。
+    默认为 ~/.keras，如果没有访问权限，则改为：/tmp/.keras
+解决方法：
+    修改 ~/.keras权限
+    $sudo chmode 777 ~/.keras
+

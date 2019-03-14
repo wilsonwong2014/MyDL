@@ -1,0 +1,8 @@
+安装shadowsocks-qt5
+  $sudo add-apt-repository ppa:hzwhuang/ss-qt5
+  $sudo apt-get update
+  $sudo apt-get install shadowsocks-qt5
+
+
+chome属性设置
+    env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/chromium_chromium.desktop /snap/bin/chromium %U --proxy-server="socks5://127.0.0.1:1080"

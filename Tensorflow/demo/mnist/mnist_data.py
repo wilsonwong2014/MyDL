@@ -1,0 +1,161 @@
+#!/usr/bin/env python3 
+# -*- coding: utf-8 -*- 
+
+'''
+mnist数据集
+   http://yann.lecun.com/exdb/mnist/
+'''
+
+import os;
+import sys;
+############# 调试 begin ###############
+argc = len(sys.argv);
+import pdb       
+if argc>1 and sys.argv[1]=='dbg':    
+    pdb.set_trace(); #调试
+############# 调试 end   ###############
+
+import time
+from keras.datasets import mnist
+import struct
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+def load_data(files=()):
+    ''' 加载mnist数据集
+
+    @param files: turple类型,
+                  None--直接调用keras.dataset.mnist.load_data,
+                  其他--files(0)训练输入文件,files(1)训练输出文件,files(2)测试输入文件,files(3)测试输出文件
+    @return: (x_train, y_train,x_test, y_test)
+             x_train ---[n x 784],训练输入数据,每行表示一张图像(28x28)
+             y_train ---[n x 1  ],训练标签数据,0-9
+             x_test ----[n x 784],测试输入数据,每行表示一张图像(28x28)
+             y_test ----[n x 1  ],测试标签数据,0-9
+    '''
+    if len(files)<4:
+        #直接调用keras.dataset.mnist.load_data
+        (x_train, y_train), (x_test, y_test) = mnist.load_data();
+    else:
+        ##文件解析
+        #x_train
+        with open(files(0),'rb') as f:
+            (magic_number,number_of_images,number_of_rows,number_of_cols)=struct.unpack('>iiii',f.read(32*4));
+            x_train = np.fromfile(f,dtype=np.uint8).reshape(number_of_images, number_of_rows*number_of_cols);
+        #y_train
+        with open(files(1),'rb') as f:
+            (magic_number,number_of_images)=struct.unpack('>ii',f.read(32*2));
+            y_train = np.fromfile(f,dtype=np.uint8).reshape(number_of_images, 1);
+        #x_test
+        with open(files(2),'rb') as f:
+            (magic_number,number_of_images,number_of_rows,number_of_cols)=struct.unpack('>iiii',f.read(32*4));
+            x_test = np.fromfile(f,dtype=np.uint8).reshape(number_of_images, number_of_rows*number_of_cols);
+        #y_test
+        with open(files(3),'rb') as f:
+            (magic_number,number_of_images)=struct.unpack('>ii',f.read(32*2));
+            y_test = np.fromfile(f,dtype=np.uint8).reshape(number_of_images, 1);
+    return (x_train, y_train,x_test, y_test);
+
+
+def save_to_img(to_path,x,rows=20,cols=20):
+    ''' 把数据保存到图像组.
+       每张图像由rows x cols个单元组成,每个单元保存一张图像.
+    
+    @param to_path:保存路径.
+    @param x:      图像数据 [n x 784],每行表示一张图像(28 x 28)
+    @param rows:   图像组行数
+    @param cols:   图像组列数
+    @return:None
+    '''
+    #目录创建
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
+
+    fig, ax = plt.subplots(
+         nrows=rows,
+         ncols=cols,
+         sharex=True,
+         sharey=True, );
+    ax = ax.flatten();
+    
+    image_num=x.shape[0]
+    #rows=2;
+    #cols=2;
+    #image_num=506
+
+    frame_index=0
+    index=0
+    while(index<image_num):
+        #draw
+        for i in range(rows*cols):
+            img = x[frame_index*(rows*cols)+i,:].reshape(28, 28);
+            ax[i].imshow(img, cmap='Greys', interpolation='nearest');
+            index+=1;
+            if(index>=image_num):
+                break;
+
+        #Output
+        frame_index+=1 
+        #plt.show();
+        filepath="%s/%d.png" %(to_path,frame_index)
+        print(filepath)
+        plt.savefig(filepath)
+
+def save_to_img_cv2(to_path,x,rows=30,cols=30):
+    ''' 把数据保存到图像组--使用opencv方法.
+       每张图像由rows x cols个单元组成,每个单元保存一张图像.
+    
+    @param to_path:保存路径.
+    @param x:      图像数据 [n x 784],每行表示一张图像(28 x 28)
+    @param rows:   图像组行数
+    @param cols:   图像组列数
+    @return:None
+    '''
+
+    #目录创建
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
+
+    #创建输出图像
+    image=np.zeros((rows*28,cols*28),dtype=np.uint8)
+    image_num=x.shape[0]
+    #rows=2;
+    #cols=2;
+    #image_num=506
+
+    frame_index=0
+    imgs_per_frame=rows*cols;
+    index=0
+    while(index<image_num):
+        #write
+        for i in range(rows):
+            for j in range(cols):
+                image[i*28:(i+1)*28,j*28:(j+1)*28]=x[index,:].reshape(28,28)
+                index+=1
+                if index>=image_num:
+                    break
+            if index>=image_num:
+                break
+        #Output
+        frame_index+=1 
+        filepath="%s/%d.png" %(to_path,frame_index)
+        print(filepath)
+        cv2.imwrite(filepath,image)
+
+
+if __name__=='__main__':
+    use_cv2=True
+    if use_cv2:
+        (x_train,y_train,x_test,y_test)=load_data();
+        to_path='%s/Data/mnist/png_cv2/train' %(os.getenv('HOME'))
+        save_to_img_cv2(to_path,x_train);
+        to_path='%s/Data/mnist/png_cv2/test' %(os.getenv('HOME'))
+        save_to_img_cv2(to_path,x_test);    
+    else:#plt
+        (x_train,y_train,x_test,y_test)=load_data();
+        to_path='%s/Data/mnist/png/train' %(os.getenv('HOME'))
+        save_to_img(to_path,x_train);
+        to_path='%s/Data/mnist/png/test' %(os.getenv('HOME'))
+        save_to_img(to_path,x_test);    
+

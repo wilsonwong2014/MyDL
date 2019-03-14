@@ -1,0 +1,131 @@
+#!/bin/sh
+
+########################################
+#模块名称：ROS功能包拷贝(源码)
+#模块功能：拷贝ROS源码功能包，把相关的文件夹名称、文件名称及文本类型文件替换功能包名称
+#   如：
+#      旧功能包:OldPackage
+#   拷贝为
+#      新功能包:NewPackage
+#   操作：
+#      1.build,bin,lib目录不拷贝
+#      2.文件夹改名:把含有OldPackage替换为NewPackage
+#      3.文件名改名:把含有OldPackage替换为NewPackage
+#      4.文本文件搜索替换:把含有OldPackage替换为NewPackage
+#使用范例：
+#   $bash CopyPackage.sh ~/MyPrjs/ws_catkin/src/demo_pkg1 ~/MyPrjs/ws_catkin/src/demo_pkg2
+#
+#   #源功能包:<demo_pkg1>
+#   /demo_pkg1_node1.cpp
+#   #cat demo_pkg1_node1.cpp
+#   #  demo_pkg1_abcdefg
+#
+#   #修改后功能包:<demo_pkg2>
+#   /demo_pkg2_node1.cpp
+#   #cat demo_pkg2_node1.cpp
+#   #  demo_pkg2_abcdefg
+#
+######################################
+
+######################################
+#递归遍历文件夹
+# 输入参数：
+#   $1 --- 当前目录
+#   $2 --- 旧功能包名称
+#   $3 --- 新功能包名称
+travFolder()
+{ 
+    #echo "travFolder"
+    sPath=$1
+    sOldPkgName=$2
+    sNewPkgName=$3
+    echo "travFolder $sPath $sOldPkgName $sNewPkgName"
+    flist=`ls $sPath`
+    cd $1
+    #echo $flist
+    for f in ${sPath}/*
+    do
+        if test -d $f
+        then
+            echo "---dir:$f ---"
+            travFolder $f $sOldPkgName $sNewPkgName
+            #目录改名
+            sOldName=$f
+            sNewName=${sOldName/$1/$2}
+            if [ "$sOldName" != "$sNewName" ]
+            then
+               echo "mv $sOldName $sNewName"
+               mv $sOldName $sNewName
+            fi
+        else
+            echo "---file:$f ---"
+            #文件改名
+            sOldFileName=$f
+            sNewFileName=${sOldFileName/$sOldPkgName/$sNewPkgName}
+            echo "sOldFileName:$sOldFileName"
+            echo "sNewFileName:$sNewFileName"
+            if [ "$sOldFileName" != "$sNewFileName" ]
+            then
+               echo "mv $sOldFileName $sNewFileName"
+               mv $sOldFileName $sNewFileName
+            fi
+            #文件内容修改
+            echo "sed -i \"s/$sOldPkgName/$sNewPkgName/g\" $sNewFileName"
+            sed -i "s/$sOldPkgName/$sNewPkgName/g" $sNewFileName
+        fi
+    done
+    cd ../ 
+}
+
+######################################
+#参数个数
+nArgNum=$#
+if [[ $nArgNum -ne 2 ]]
+then
+  echo "error:not enough argument! Argument Number must 2,but current ArgNum:$nArgNum"
+  echo "usage:bash CopyPackage /OldPackage /NewPackage"
+  exit 1
+fi
+
+#旧目录
+sOldPath=$1
+
+#新目录
+sNewPath=$2
+
+#判断旧目录是否存在
+if [ ! -d "$sOldPath" ]; then
+  echo "error!"
+  echo "Old Package:$sOldPath not exist!"
+  exit 1
+fi
+
+#判断新目录是否存在
+if [ -d "$sNewPath" ]; then
+  echo "error!"
+  echo "New Package:$sNewPath has exist!"
+  exit 1
+fi
+#新目录父目录处理
+sNewPathP=`dirname $sNewPath`
+if [ ! -d "$sNewPathP" ]; then
+  mkdir -p $sNewPathP
+fi
+
+#提取旧目录名称
+sOldPkgName=`basename $sOldPath`
+
+#提取新目录名称
+sNewPkgName=`basename $sNewPath`
+
+#拷贝目录
+#cp -r $sOldPath $sNewPath
+
+#拷贝目录:排除build,bin,lib
+#cp -r $sOldPath $sNewPath
+echo "rsync -av --exclude build --exclude bin --exclude lib $sOldPath $sNewPath"
+rsync -av --exclude build --exclude bin --exclude lib $sOldPath/ $sNewPath/
+
+#遍历文件夹
+travFolder $sNewPath $sOldPkgName $sNewPkgName
+

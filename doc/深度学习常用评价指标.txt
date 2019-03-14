@@ -1,0 +1,11 @@
+深度学习常用评价指标
+    https://blog.csdn.net/qiu_peng/article/details/82895326
+    1、准确率 （Accuracy）
+    2、混淆矩阵 （Confusion Matrix）
+    3、精确率（Precision）与召回率（Recall）
+    4、平均精度（Average-Precision，AP）与 mean Average Precision(mAP)
+    5、IoU
+    6、ROC（Receiver Operating Characteristic）曲线与AUC（Area Under Curve）
+    7、PR曲线和ROC曲线比较
+    8、非极大值抑制（NMS）
+    

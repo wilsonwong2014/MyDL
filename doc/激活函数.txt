@@ -1,0 +1,70 @@
+ReLU、LReLU、PReLU、CReLU、ELU、SELU
+  https://blog.csdn.net/qq_20909377/article/details/79133981
+ReLU
+  ReLU(x)=x , if x>0
+          0 , if x<=0
+  tf.nn.relu(features, name=None)
+
+LReLU
+  LReLU(xi)=xi    , if xi>0
+            ai*xi , if xi<=0
+  i 表示不同通道
+  ai参数固定
+  tf.nn.leaky_relu(features, alpha=0.2, name=None)
+  
+PReLU
+  PReLU(xi)=xi    , if xi>0
+            ai*xi , if xi<=0
+  i 表示不同通道
+  ai参数可以学习
+
+CReLU
+  CReLU(x)=[ReLU(x),ReLU(-x)]
+  tf.nn.crelu(features, name=None)
+
+ELU
+  ELU(x)=x           , if x>0
+         a(exp(x)-1) , if x<=0
+  求导
+  ELU(x)'=1          , if x>0
+          ELU(x)+a   , if x<=0
+  参数a可调
+  tf.nn.elu(features, name=None)
+  
+SELU
+  SELU(x)=b*x              , if x>0
+          b*(a*(exp(x)-1)) , if x<=0
+  tf.nn.selu(features, name=None)
+
+====================================
+神经网络激活函数汇总（Sigmoid、tanh、ReLU、LeakyReLU、pReLU、ELU、maxout）
+sigmoid
+  o(x)=1/(1+exp(-x))
+
+tanh
+  tanh(x)=(exp(x)-exp(-x))/(exp(x)+exp(-x))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

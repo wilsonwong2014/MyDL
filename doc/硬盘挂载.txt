@@ -1,0 +1,52 @@
+06/10/2018 22:42:15 
+        一般情况下Ubuntu系统分配40G动态空间，每种ARM Linux开发分配20G动态空间（Android开发分配须100G动态空间）。不够可单独扩容。
+ 1、Virtualbox 菜单栏 -> 设置 -> 存储 -> SATA控制器 -> 右击，选择“添加虚拟硬盘”，再选择“创建新的虚拟磁盘”或“添加现有虚拟磁盘”，启动Ubuntu。
+2、打开GNONE终端，用如下命令查看新增的磁盘设备：
+          # fdisk -l 
+         例如：文件名为 /dev/sdb，大小为40GB。
+3、对新增磁盘进行分区、格式化：
+          # fdisk /dev/sdb        按提示操作 p打印、n新增、d 删除、w操作生效、q退出。
+          # mkfs.ext4 /dev/sdb1                        
+4、强制让内核重新找一次分区表（更新分区表）：
+          # partprobe                                  
+         这时可以看到新增了一个分区/dev/sdb1  大小为40GB。
+5、将新硬盘挂载指定目录下：                                          
+          # mkdir /home/usrname/ARM                    
+          # chmod -R 777 /home/usrname/ARM            
+、
+          # mount /dev/sdb1 /home/usrname/ARM          
+6、设置启动时自动挂载：
+          打开文件“/etc/fstab”，在末尾增加一行：
+          /dev/sdb1 /home/usrname/ARM  ext4  defaults 1  2    
+          保存退出。
+7、重新启动Ubuntu，发现成功挂载。
+          # df -h                                               
+          Filesystem            Size  Used Avail Use% Mounted on
+          LABEL=cec-rootfs       16G 1.9G   13G  13% /         
+          tmpfs                 1.9G     0 1.9G   0% /dev/shm  
+          /dev/sda1             194M   28M 157M  15% /boot     
+          /dev/sdb1              40G  176M  38G   1% /home     
+          #   
+
+---------------------
+
+本文来自 Nerror 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/u010333613/article/details/72817748?utm_source=copy 
+
+
+===========================
+由于编辑 /etc/fstab有误导致系统无法正常启动的修正方法
+用ubuntu系统安装U盘启动ubuntu，打开终端，进入安装系统的目录，修改 /etc/fstab 
+   /media/ubuntu/xxxxxxxxxxxxx
+
+===========================
+ubuntu home分区合并到根目录
+我的ubuntu提示home分区太小，我想删除home分区，然后把home放到根目录里去，怎么弄？
+cd /
+mv home home.old 将原home重命名
+
+mkdir /home 新建一个home目录
+
+cp -a /home.old/. /home/. 将原home下的所有文件拷贝到新home
+
+然后编辑/etc/fstab文件，注释掉/home挂载的那一行。 
+

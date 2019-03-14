@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+'''
+文件目录操作汇总
+
+'''
+
+import os
+import sys
+import shutil
+
+#一、python中对文件、文件夹操作时经常用到的os模块和shutil模块常用方法。
+#1.得到当前工作目录，即当前Python脚本工作的目录路径: os.getcwd()
+print('os.getcwd():',os.getcwd())
+
+#2.返回指定目录下的所有文件和目录名:os.listdir([path])
+print('os.listdir():\n',os.listdir())
+print('os.listdir("../"):\n',os.listdir('../'))
+
+#3.函数用来删除一个文件:os.remove(filepath)
+if os.path.exists('temp.txt'):
+    os.remove('temp.txt')
+
+#4.删除多个目录：os.removedirs（r“c：\python”）,递归删除子目录
+if os.path.exists('temp'):
+    #os.removedirs('temp')
+    #递归的删除目录及文件
+    #shutil.rmtree('test/aa')
+    #以下两个函数用于删除空目录文件
+    #os.rmdir("test/aa")
+    #os.removedirs("test/aa")
+    #print "目录删除后： %s"  % os.listdir(dstPath)
+    #shutil 模块　
+    #shutil.copyfile( src, dst)   #从源src复制到dst中去。 如果当前的dst已存在的话就会被覆盖掉
+    #shutil.move( src, dst)  #移动文件或重命名
+    #shutil.copymode( src, dst) #只是会复制其权限其他的东西是不会被复制的
+    #shutil.copystat( src, dst) #复制权限、最后访问时间、最后修改时间
+    #shutil.copy( src, dst)  #复制一个文件到一个文件或一个目录
+    #shutil.copy2( src, dst)  #在copy上的基础上再复制文件最后访问时间与修改时间也复制过来了，类似于cp –p的东西
+    #shutil.copy2( src, dst)  #如果两个位置的文件系统是一样的话相当于是rename操作，只是改名；如果是不在相同的文件系统的话就是做move操作
+    #shutil.copytree( olddir, newdir, True/Flase) #把olddir拷贝一份newdir，如果第3个参数是True，则复制目录时将保持文件夹下的符号连接，如果第3个参数是False，则将在复制的目录下生成物理副本来替代符号连接
+    #shutil.rmtree( src )   #递归删除一个目录以及目录内的所有内容
+    shutil.rmtree('temp')
+
+#5.检验给出的路径是否是一个文件：os.path.isfile(filepath)
+os.path.isfile('temp.txt')
+
+#6.检验给出的路径是否是一个目录：os.path.isdir()
+os.path.isdir('temp')
+
+#7.判断是否是绝对路径：os.path.isabs()
+os.path.isabs('temp')
+
+#8.检验给出的路径是否真地存:os.path.exists()
+os.path.exists('temp')
+
+#9.返回一个路径的目录名和文件名:os.path.split()     eg os.path.split('/home/swaroop/byte/code/poem.txt') 结果：('/home/swaroop/byte/code', 'poem.txt') 
+vals=os.path.split('/home/temp/file.txt') #=>('/home/temp','file.txt')
+print("os.path.split('/home/temp/file.txt'):",vals)
+
+#10.分离扩展名：os.path.splitext()
+vals=os.path.splitext('/home/temp/file.txt') #=>('/home/temp/file','.txt')
+print("os.path.splitext('/home/temp/file.txt'):",vals)
+
+#11.获取路径名：os.path.dirname()
+val=os.path.dirname('/home/temp/file.txt')   #=>'/home/temp'
+print("os.path.dirname('/home/temp/file.txt'):",val)
+
+#12.获取文件名：os.path.basename()
+val=os.path.basename('/home/temp/file.txt')  #=>'file.txt'
+print("os.path.basename('/home/temp/file.txt'):",val)
+val=os.path.basename('/home/temp/file')      #=>'file'
+print("os.path.basename('/home/temp/file'):",val)
+
+#13.运行shell命令: os.system()
+os.system('ls')
+
+#14.读取和设置环境变量:os.getenv() 与os.putenv()
+#设置系统环境变量
+#1、os.environ['环境变量名称']='环境变量值' #其中key和value均为string类型
+#2、os.putenv('环境变量名称', '环境变量值') #无效?
+#获取系统环境变量
+#1、os.environ['环境变量名称']
+#2、os.getenv('环境变量名称')
+os.environ['z_test']='aaaaaa' #设置环境吧变量:临时,退出清除
+os.environ['z_test']          #获取环境变量
+os.getenv('z_test')           #获取环境变量
+
+#15.给出当前平台使用的行终止符:os.linesep    Windows使用'\r\n'，Linux使用'\n'而Mac使用'\r'
+os.linesep #=>'\n'
+
+#16.指示你正在使用的平台：os.name       对于Windows，它是'nt'，而对于Linux/Unix用户，它是'posix'
+os.name    #=>'posix'
+
+#17.重命名：os.rename（old， new）
+if os.path.exists('temp.txt') and not os.path.exists('temp_new.txt'):
+    os.rename('temp.txt','temp_new.txt')
+
+#18.创建多级目录：os.makedirs（r“c：\python\test”）
+os.makedirs('temp/a/b')
+
+#19.创建单个目录：os.mkdir（“test”）
+if not os.path.exists('temp'):
+    os.mkdir('temp')
+
+#20.获取文件属性：os.stat（file）
+os.stat('demo_path_file.py')
+
+#21.修改文件权限与时间戳：os.chmod（file）
+#22.终止当前进程：os.exit（）
+#23.获取文件大小：os.path.getsize（filename）
+os.path.getsize('demo_path_file.py')
+
+'''
+二、文件操作方法大全：
+1.os.mknod("test.txt")             #创建空文件
+2.fp = open("test.txt",w)          #直接打开一个文件，如果文件不存在则创建文件
+3.关于open 模式：
+  w：以写方式打开，
+  a：以追加模式打开 (从 EOF 开始, 必要时创建新文件)
+  r+：以读写模式打开
+  w+：以读写模式打开 (参见 w )
+  a+：以读写模式打开 (参见 a )
+  rb：以二进制读模式打开
+  wb：以二进制写模式打开 (参见 w )
+  ab：以二进制追加模式打开 (参见 a )
+  rb+：以二进制读写模式打开 (参见 r+ )
+  wb+：以二进制读写模式打开 (参见 w+ )
+  ab+：以二进制读写模式打开 (参见 a+ )
+
+  fp.read([size])                     #size为读取的长度，以byte为单位
+  fp.readline([size])                 #读一行，如果定义了size，有可能返回的只是一行的一部分
+  fp.readlines([size])                #把文件每一行作为一个list的一个成员，并返回这个list。其实它的内部是通过循环调用readline()来实现的。如果提供size参数，size是表示读取内容的总长，也就是说可能只读到文件的一部分。
+  fp.write(str)                       #把str写到文件中，write()并不会在str后加上一个换行符
+  fp.writelines(seq)                  #把seq的内容全部写到文件中(多行一次性写入)。这个函数也只是忠实地写入，不会在每行后面加上任何东西。
+  fp.close()                          #关闭文件。python会在一个文件不用后自动关闭文件，不过这一功能没有保证，最好还是养成自己关闭的习惯。  如果一个文件在关闭后还对其进行操作会产生ValueError
+  fp.flush()                          #把缓冲区的内容写入硬盘
+  fp.fileno()                         #返回一个长整型的”文件标签“
+  fp.isatty()                         #文件是否是一个终端设备文件（unix系统中的）
+  fp.tell()                           #返回文件操作标记的当前位置，以文件的开头为原点
+  fp.next()                           #返回下一行，并将文件操作标记位移到下一行。把一个file用于for … in file这样的语句时，就是调用next()函数来实现遍历的。
+  fp.seek(offset[,whence])            #将文件打操作标记移到offset的位置。这个offset一般是相对于文件的开头来计算的，一般为正数。但如果提供了whence参数就不一定了，whence可以为0表示从头开始计算，1表示以当前位置为原点计算。2表示以文件末尾为原点进行计算。需要注意，如果文件以a或a+的模式打开，每次进行写操作时，文件操作标记会自动返回到文件末尾。
+  fp.truncate([size])                 #把文件裁成规定的大小，默认的是裁到当前文件操作标记的位置。如果size比文件的大小还要大，依据系统的不同可能是不改变文件，也可能是用0把文件补到相应的大小，也可能是以一些随机的内容加上去。
+三、目录操作方法大全
+  1.创建目录
+  os.mkdir("file")                   
+  2.复制文件：
+  shutil.copyfile("oldfile","newfile")        #oldfile和newfile都只能是文件
+  shutil.copy("oldfile","newfile")            #oldfile只能是文件夹，newfile可以是文件，也可以是目标目录
+  3.复制文件夹：
+  4.shutil.copytree("olddir","newdir")        #olddir和newdir都只能是目录，且newdir必须不存在
+  5.重命名文件（目录）
+  os.rename("oldname","newname")              #文件或目录都是使用这条命令
+  6.移动文件（目录）
+  shutil.move("oldpos","newpos")   
+  7.删除文件
+  os.remove("file")
+  8.删除目录
+  os.rmdir("dir")                             #只能删除空目录
+  shutil.rmtree("dir")                        #空目录、有内容的目录都可以删
+  9.转换目录
+  os.chdir("path")                            #换路径
+
+'''
+
+

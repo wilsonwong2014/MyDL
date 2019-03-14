@@ -1,0 +1,503 @@
+机器配置
+    主板：技嘉x299 gaming 7 pro
+    CPU:  i7 7800k
+    内存:DDR4 3000 16G
+    SSD : m.2 960 EVO 500G
+    硬盘：4T
+    显卡：GTX1080ti
+    系统：ubuntu16.04.5 LTS
+
+==================================
+06/10/2018 15:35:15 
+安装系统ubuntu16.04.5 LTS
+   SSD分区
+   分区              文件系统   挂载点  大小  标识
+   /dev/nvme0n1p1    ext4       /      120G  boot
+   /dev/nvme0n1p2    extended          380G
+   -/dev/nvme0n1p5   ext4       /home  364G 
+   -/dev/nvme0n1p6   linux-swap        16G
+   机械硬盘分区
+   /dev/sda1         ext4       /home/hjw/d 1T
+   /dev/sda2         ext4       /home/hjw/e 1T
+   /dev/sda3         ext4       /home/hjw/f 1T
+   /dev/sda4         ext4       /home/hjw/g 1T
+
+================del==================
+06/10/2018 15:44:14 
+安装磁盘管理工具 gparted
+  $sudo apt-get install gparted
+
+==================================
+06/10/2018 23:23:17 
+修改更新源
+ $sudo gedit /etc/apt/sources.list
+ #追加
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
+deb http://mirrors.ustc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-proposed main restricted universe multiverse
+deb-src http://mirrors.ustc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse
+ $sudo apt-get update
+ $sudo apt-get upgrade
+
+=================================
+=================================
+*         系统备份点            *
+* 20190218-1                   *
+=================================
+
+=================================
+07/10/2018 08:06:25 
+安装显卡驱动
+    参考“显卡驱动安装.txt”
+
+=================================
+=================================
+*         系统备份点            *
+* 20190218-2-gtx                *
+=================================
+
+=================================
+=================================
+*         系统备份点            *
+* 20190218-3-toolkit            *
+=================================
+
+=================================
+$sudo apt-get install python-pip
+
+=================================
+$sudo apt-get install python3-pip
+
+=================================
+=================================
+*         系统备份点            *
+* 20190218-4-pip               *
+=================================
+
+=============del====================
+07/10/2018 19:15:57 
+安装pip3
+  $sudo apt-get instal python3-pip
+
+=============del====================
+07/10/2018 19:37:34 
+https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001432712108300322c61f256c74803b43bfd65c6f8d0d0000
+安装virtualenv
+  $sudo apt-get install virtualenv
+
+
+=============del====================
+08/10/2018 10:06:07 
+安装cmake
+  $sudo apt-get install cmake
+  $sudo apt-get install cmake-qt-gui
+
+=================================
+2019年02月18日 星期一 23时29分02秒 
+$sudo pip install --upgrade pip
+$sudo pip3 install --upgrade pip
+hjw@hjw:~$ pip3 --version
+Traceback (most recent call last):
+  File "/usr/bin/pip3", line 9, in <module>
+    from pip import main
+ImportError: cannot import name 'main'
+
+解决方法：
+    #修改 /usr/bin/pip3
+    #先通过 sudo vim /usr/bin/pip3 打开文件，并将文件修改为
+    from pip import __main__
+    if __name__ == '__main__':
+        sys.exit(__main__._main())
+
+pip3 install 出现如下错误提示解决方法：
+    https://blog.csdn.net/zhanghao840/article/details/82345066
+    https://blog.csdn.net/qq_30163461/article/details/80396258
+    You are using pip version 8.1.1, however version 18.1 is available.
+    You should consider upgrading via the 'pip install --upgrade pip' command.
+
+=============del====================
+07/10/2018 20:40:09 
+安装pip
+  $sudo apt-get install python-pip
+  $sudo pip install --upgrade pip
+
+=================================
+2019年02月19日 星期二 06时07分44秒 
+安装tensorflow
+ $pip3 install tensorflow==1.10.1
+ $pip3 install tensorflow-gpu==1.10.1
+
+=================================
+=================================
+*         系统备份点            *
+* 20190219-1-tf1.10.1           *
+=================================
+
+keras官网
+  https://keras.io
+  安装keras
+  $sudo pip3 install keras
+keras OK
+
+===============================
+16/11/2018 10:37:47 
+    $sudo pip3 install matplotlib==3.0.2
+
+yolo OK
+
+=================================
+=================================
+*         系统备份点            *
+yolo ok
+* 20190219-2-matplotlib_yolo   *
+=================================
+
+=================================
+2019-02-19 09:59:17 
+$sudo pip3 install opencv-python 
+OpenCV OK
+
+================================
+2019-02-19 10:06:10 
+$sudo apt-get install python3-tk
+
+================================
+2019-02-19 10:37:20 
+  $sudo apt-get install python-scipy 
+
+================================
+2019-02-19 10:57:41 
+$sudo apt-get install python-pandas 
+$sudo apt-get install ipython 
+$sudo apt-get install ipython-notebook 
+
+
+=================================
+*         系统备份点            *
+* 20190219-3-yolo              *
+=================================
+
+
+=================================
+*         系统备份点            *
+* 20190219-4-tf                *
+=================================
+
+================================
+2019-02-19 15:35:23 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/pandas/io/pytables.py", line 466, in __init__
+    import tables  # noqa
+ImportError: No module named 'tables'
+解决方法：
+    $sudo pip3 install tables
+
+================================
+2019-02-19 15:35:36 
+$ sudo pip3 install psutil
+$ sudo apt-get install ipython3
+$ sudo apt-get install ipython3-notebook
+$ sudo pip3 install scikit-image
+
+===============================
+2019-02-19 16:09:51 
+Object Detect图像标注工具labelImg
+    https://github.com/tzutalin/labelImg
+
+$ sudo apt-get install htop
+$ sudo apt-get install iotop
+$ sudo apt-get install git
+
+
+=============================
+31/01/2019 19:01:35 
+安装Docker
+  $ wget -qO- https://get.docker.com/ | sh
+hjw@hjw:~$ wget -qO- https://get.docker.com/ | sh
+# Executing docker install script, commit: 4957679
++ sudo -E sh -c apt-get update -qq >/dev/null
++ sudo -E sh -c apt-get install -y -qq apt-transport-https ca-certificates curl >/dev/null
++ sudo -E sh -c curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | apt-key add -qq - >/dev/null
++ sudo -E sh -c echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial edge" > /etc/apt/sources.list.d/docker.list
++ sudo -E sh -c apt-get update -qq >/dev/null
++ sudo -E sh -c apt-get install -y -qq --no-install-recommends docker-ce >/dev/null
++ sudo -E sh -c docker version
+Client:
+ Version:           18.09.1
+ API version:       1.39
+ Go version:        go1.10.6
+ Git commit:        4c52b90
+ Built:             Wed Jan  9 19:35:23 2019
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          18.09.1
+  API version:      1.39 (minimum version 1.12)
+  Go version:       go1.10.6
+  Git commit:       4c52b90
+  Built:            Wed Jan  9 19:02:44 2019
+  OS/Arch:          linux/amd64
+  Experimental:     false
+If you would like to use Docker as a non-root user, you should now consider
+adding your user to the "docker" group with something like:
+
+  sudo usermod -aG docker hjw
+
+Remember that you will have to log out and back in for this to take effect!
+
+WARNING: Adding a user to the "docker" group will grant the ability to run
+         containers which can be used to obtain root privileges on the
+         docker host.
+         Refer to https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
+         for more information.
+  $ sudo usermod -aG docker hjw
+
+  #测试
+  $sudo docker run hello-world
+
+==============================
+31/01/2019 19:26:49 
+安装nvidia-docker
+  https://github.com/NVIDIA/nvidia-docker
+  Quickstart
+  # If you have nvidia-docker 1.0 installed: we need to remove it and all existing GPU containers
+  $docker volume ls -q -f driver=nvidia-docker | xargs -r -I{} -n1 docker ps -q -a -f volume={} | xargs -r docker rm -f
+  $sudo apt-get purge -y nvidia-docker
+
+  # Add the package repositories
+  $curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+    sudo apt-key add -
+  $distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+  $curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+    sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+  $sudo apt-get update
+
+  # Install nvidia-docker2 and reload the Docker daemon configuration
+  $sudo apt-get install -y nvidia-docker2
+  $sudo pkill -SIGHUP dockerd
+
+  # Test nvidia-smi with the latest official CUDA image
+  $docker run --runtime=nvidia --rm nvidia/cuda:9.0-base nvidia-smi
+Unable to find image 'nvidia/cuda:9.0-base' locally
+9.0-base: Pulling from nvidia/cuda
+7b722c1070cd: Pull complete 
+5fbf74db61f1: Pull complete 
+ed41cb72e5c9: Pull complete 
+7ea47a67709e: Pull complete 
+35400734fa04: Pull complete 
+195acf8a5739: Pull complete 
+127028f911f6: Pull complete 
+Digest: sha256:157d05b8a9f3a26dce71c9e824d3fab769d77326f471d0143a236c37d278450d
+Status: Downloaded newer image for nvidia/cuda:9.0-base
+Thu Jan 31 19:39:21 2019       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 384.130                Driver Version: 384.130                   |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 108...  Off  | 00000000:65:00.0  On |                  N/A |
+|  0%   44C    P8    16W / 250W |    446MiB / 11171MiB |      1%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+
+
+==============================
+14/02/2019 14:15:10 
+添加dockder软件源
+    $curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+    $sudo add-apt-repository "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
+
+=============================
+16/02/2019 08:04:46 
+修改docker镜像和容器存储路径
+    https://blog.csdn.net/qq_35510622/article/details/79139083
+    https://blog.csdn.net/wenwenxiong/article/details/78728696
+  docker默认路径: /var/lib/docker
+  配置文件：      /etc/default/docker
+  1.停止docker服务
+    $service docker stop
+  2.移动docker根目录到新位置
+    $sudo mv /var/lib/docker /home/hjw/docker -r
+  3.创建软链接
+    $ln -s /home/hjw/docker /var/lib/docker
+  4.启动docker服务
+    $service docker start
+
+
+=================================
+*         系统备份点            *
+* 20190219-5-tf1.10.1_docker   *
+=================================
+
+================================
+2019-02-19 18:57:05 
+$ sudo apt-get install chromium-browser
+
+安装shadowsocks-qt5
+  $sudo add-apt-repository ppa:hzwhuang/ss-qt5
+  $sudo apt-get update
+  $sudo apt-get install shadowsocks-qt5
+
+====================================
+====================================
+*         系统备份点               *
+* 20190219-6-tf1.10.1_docker_vpn   *
+====================================
+
+====================================
+2019-02-19 19:57:04 
+$sudo apt-get install gparted
+
+====================================
+2019-02-19 20:15:46 
+$ sudo apt-get install gnome-nettool
+
+====================================
+2019-02-21 18:35:53 
+$pip3 install sklearn
+
+====================================
+2019-02-25 15:57:48 
+配置GitHub,详细描述看 "git.txt"
+
+====================================
+2019-02-25 15:59:26 
+安装视频解码
+    网页 https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013743256916071d599b3aed534aaab22a0db6c4e07fd0000 的视频无法播放
+    拷贝视频地址 http://liaoxuefeng.gitee.io/git-resources/1-git-init.mp4 到Firefox窗口自动触发视频解码器安装。
+
+====================================
+2019-02-25 15:58:30 
+$sudo apt-get install vim
+
+============================
+2019-02-25 17:50:33 
+安装文件比较工具 meld
+    $sudo apt-get install meld
+乱码问题：
+    从Windows拷贝文本文件到Ubuntu出现乱码问题。
+    可能原因为Windows的文本文件编码为ANSI，改为UTF-8编码.
+
+=============================
+2019-02-25 17:50:43 
+安装UML工具 Umbrello
+  $sudo apt-get install umbrello
+
+=============================
+2019-02-25 17:50:48 
+安装绘图工具 dia
+  https://wiki.gnome.org/Apps/Dia/Python
+  $sudo apt-get install dia
+
+============================
+2019-02-27 14:49:07 
+pip3 异常，重新安装setuptools
+hjw@hjw:~/work/platform/setuptools-38.5.1$ sudo python3 setup.py install
+
+===========================
+2019-02-27 14:50:03 
+$sudo pip3 install pytest
+
+===========================
+2019-02-27 15:26:40 
+$ sudo pip3 install numba
+
+===========================
+2019-03-01 14:50:52 
+安装绘图工具
+$ sudo apt-get install kolourpaint4
+
+==========================
+2019-03-01 16:09:26 
+升级ipython版本
+    诱因：ipython notebook 打开 ipynb文件时，弹出以下信息框：
+        This notebook has been converted from a newer notebook format (v4) to the current notebook format (v3). 
+        The next time you save this notebook, the current notebook format will be used. Some features of the original 
+        notebook may not be available. To preserve the original version, close the notebook without saving it.
+    原因：ipython版本太低
+解决方法：
+    #卸载ipython,ipython-notebook
+    $sudo dpkg -r ipython-notebook
+    $sudo dpkg -r ipython
+    #安装 ipython,notebook
+    $sudo pip3 install ipython
+    $sudo pip3 install notebook
+    
+    如果安装过程出现以下异常
+      Found existing installation: pyzmq 15.2.0
+      Cannot uninstall 'pyzmq'. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstall.
+    解决方法：重新安装pyzmq修复
+    $pip3 install --ignore-installed pyzmq
+
+========================
+2019-03-01 18:43:09 
+$sudo apt-get install rar
+
+
+============================================
+============================================
+* 2019-03-06 09:42:04                      =
+*         系统备份点                       *
+* 20190306-1_tf1.10.1_docker_vpn_ipython   *
+============================================
+
+============================================
+2019-03-06 10:44:08 
+$sudo pip3 install opencv-contrib-python
+    无用
+
+===============================
+2019-03-07 11:22:46 
+安装飞秋
+    $sudo apt-get install iptux 
+
+===============================
+2019-03-07 22:41:24 
+keras下载数据路径问题
+    https://github.com/keras-team/keras/blob/master/keras/utils/data_utils.py/#L123
+    详细查看 get_file()源码。
+    默认为 ~/.keras，如果没有访问权限，则改为：/tmp/.keras
+解决方法：
+    修改 ~/.keras权限
+    $sudo chmode 777 ~/.keras
+
+=============================
+2019-03-12 19:48:44 
+$sudo pip3 install pipenv
+    未使用
+
+===========================
+2019-03-13 11:07:09 
+doc 生成器环境安装
+$sudo pip3 install sphinx sphinx-autobuild sphinx_rtd_theme recommonmark
+
+参考：advisor-master
+    # Advisor Docs
+    ## Installation
+
+    ```bash
+    pip install sphinx sphinx-autobuild sphinx_rtd_theme recommonmark
+    ```
+    ## Deployment
+    Change config refer to https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html .
+    ```bash
+    make html
+    ```
+    ```bash
+    open build/html/index.html
+    ```
+

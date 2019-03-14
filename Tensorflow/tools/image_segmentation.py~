@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+''' 图像分割
+    https://blog.csdn.net/llh_1178/article/details/73321075
+'''
+
+import os
+import sys
+import argparse
+import pdb
+import cv2
+#import matplotlib.pyplot as plt
+import numpy as np
+
+def img_seg(img):
+    '''图像分割
+    '''
+    img = cv2.imread("smarties.png")
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cv2.imshow('debug-src',gray)
+    # 将颜色转变为灰色之后，可为图像设一个阈值，将图像二值化。
+    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+    cv2.imshow('debug-thresh',thresh)
+    # 下面用morphologyEx变换来除去噪声数据，这是一种对图像进行膨胀之后再进行腐蚀的操作，它可以提取图像特征：
+    kernel = np.ones((3,3), np.uint8)
+    opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations= 2)
+    cv2.imshow('debug-open',opening)
+    # 通过对morphologyEx变换之后的图像进行膨胀操作，可以得到大部分都是背景的区域：
+    sure_bg = cv2.dilate(opening, kernel, iterations=3)
+    cv2.imshow('debug-sure_bg',sure_bg)
+    # 接着通过distanceTransform来获取确定前景区域，原理是应用一个阈值来决定哪些区域是前景，越是远离背景区域的边界的点越可能属于前景。
+    dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+    cv2.imshow('debug-distanceTransform',dist_transform)
+    ret, sure_fg = cv2.threshold(dist_transform, 0.7 * dist_transform.max(), 255, 0)
+    cv2.imshow('debug-sure_fg',sure_fg)
+    # 考虑前景和背景中有重合的部分，通过sure_fg和sure_bg的集合相减得到。
+    sure_fg = np.uint8(sure_fg)
+    unknown = cv2.subtract(sure_bg, sure_fg)
+    cv2.imshow('debug-unknown',unknown)
+    # 现在有了这些区域，就可以设定“栅栏”来阻止水汇聚了，这通过connectedComponents函数来完成
+    ret, markers = cv2.connectedComponents(sure_fg)
+    # 在背景区域上加1， 这会将unknown区域设置为0：
+    markers = markers + 1
+    markers[unknown==255] = 0
+    # 最后打开门，让水漫起来并把栅栏绘成红色
+    markers = cv2.watershed(img, markers)
+    img[markers == -1] = [255, 0, 0]
+    #plt.imshow(img), plt.xticks([]),plt.yticks([])
+    #plt.show()
+    cv2.imshow('test',img)
+    cv2.waitKey()
+
+def params():
+    ''' 程序参数
+    '''
+    #程序描述
+    description='图像分割'
+    # Create ArgumentParser() object
+    parser = argparse.ArgumentParser(description=description);
+    # Add argument
+    parser.add_argument('--savepath',type=str
+        , help='保存路径. eg. --savepath "%s/Data/baidu_img"'%(os.getenv('HOME')),default='%s/Data/baidu_img'%(os.getenv('HOME')));
+    parser.add_argument('--keys',type=str, help='搜索关键字. eg. --keys "手写数字"',default='手写数字');
+    parser.add_argument('--max_pages', type=int, help='最大下载页数(0-不限制,默认10). eg. --max_pages 10', default=10);
+    parser.add_argument('--dbg', type=int, help='是否调试(1-调试,0-不调试). eg. --dbg 0', default=0);
+    # Parse argument
+    arg = parser.parse_args();
+    #调试
+    pdb.set_trace() if arg.dbg==1 else ''
+    return arg
+
+
+def main(arg):
+    ''' 主函数
+    '''
+    img_seg('')
+
+
+if __name__ == '__main__':
+    arg=params()
+    main(arg)
+
+

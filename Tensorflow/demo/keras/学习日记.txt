@@ -1,0 +1,3 @@
+from keras.layers import TimeDistributed
+    TimeDistributed原理及使用方法
+    https://keras.io/zh/getting-started/functional-api-guide/
