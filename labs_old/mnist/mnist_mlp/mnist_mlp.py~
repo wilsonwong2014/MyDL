@@ -1,0 +1,472 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+'''Trains a simple deep NN on the MNIST dataset.
+
+Gets to 98.40% test accuracy after 20 epochs
+(there is *a lot* of margin for parameter tuning).
+2 seconds per epoch on a K520 GPU.
+
+SQLite3命令操作大全
+    https://www.cnblogs.com/hbtmwangjin/p/7941403.html
+
+多层神经网络
+  使用sqlit3管理训练结果数据
+  数据库名为:state.db,与脚本放在同一目录
+
+模块功能:
+    MNIST数据集MLP训练.
+    超参数组合批量训练MNIST数据集,使用sqlit3管理训练结果.
+    脚本提供三个功能:超参组合批量训练,最佳训练模型查询,模型预测.
+    
+参数说明:
+    --datapath     字符串,数据保存路径,默认"./temp"
+                   存放数据库文件 ./temp/state.db
+                   存放训练模型文件 ./temp/model/*.yaml
+                   存放训练结果文件 ./temp/model/*.dat
+    --fun          脚本功能,默认0
+                   0-超参组合批量训练
+                   1-查询最佳训练模型
+                   2-模型预测
+    {超参组合批量训练}
+    --max_trains   整型,最大训练样本数,0表示全部,默认0
+    --max_tests    整型,最大测试样本数,0表示全部
+    --batch_size   整型,批数量,默认128
+    --epochs       整型,迭代次数,默认10
+    --hidlayers    字符串,超参组合批量训练:隐层层数,多个逗号隔开,默认"2,3"
+    --neurons      字符串,超参组合批量训练:隐层神经元数目,多个逗号隔开,参数数目不能小于最大隐层层数,默认"400,500,600"'
+    --dropouts     字符串,超参组合批量训练:dropout系数,多个逗号隔开,默认"0.2,0.4"
+    --activations  字符串,超参组合批量训练:激活函数,多个逗号隔开,默认"linear,relu,tanh"'
+    {查询最佳训练模型}
+    {模型预测}
+    --modelfile    模型参数文件,默认""
+                   模型文件命名规则:"hidlayer_num-hidlayer_nerouns-dropout-activation",eg."2-(300,500)-0.2-linear"
+                     hidlayer_num ------- 隐层层数
+                     hidlayer_nerouns --- 隐层神经元数
+                     dropout ------------ dropout系数
+                     activation --------- 激活函数
+    --testpath     预测图像目录,默认"./test"
+    --savefile     预测结果文件,默认"./test/result.txt"
+                       文件名:结果
+
+使用范例:
+    #批量超参模型训练
+    $python3 mnist_mlp.py --fun 0 --datapath ~/Data/mnist_mlp --max_trains 3000 --max_tests 300 --batch_size 128 --epochs 10 --hidlayers "2,3" --neurons "400,500,600" --dropouts "0.2,0.4" --activations "linear,relu,tanh"
+
+    #获取最佳训练模型,返回模型参数文件
+    $python3 mnist_mlp.py --fun 1 --datapath ~/Data/mnist_mlp 
+
+    #模型预测
+    $python3 mnist_mlp.py --fun 2 --modelfile ~/Data/mnist_mlp/model/model.dat --testpath ~/Data/mnist_mlp/test --savefile ~/Data/mnist_mlp/test/result.txt
+
+'''
+from __future__ import print_function
+
+import os
+import sys
+import pdb
+
+import keras
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.models import load_model
+from keras.layers import Dense, Dropout
+from keras.optimizers import RMSprop
+import itertools
+import shutil
+import numpy as np
+import random
+import sqlite3
+import gc
+import argparse
+import cv2
+
+class Data:
+    ''' sqlite数据管理
+    '''
+    def __init__(self,db_path):
+        self.OpenDb(db_path)
+
+
+    def __del__(self):
+        self.CloseDb()
+
+
+    def OpenDb(self,db_path):
+        ''' 打开数据库
+        '''
+        #链接数据库
+        self.conn = sqlite3.connect(db_path)
+        print("Opened database successfully")
+        #判断数据表是否存在
+        cur = self.conn.execute("SELECT *  from sqlite_master where type='table' and name='data' ;")
+        if cur.fetchone() is None:
+            #创建数据表
+            self.conn.execute("create table data(" \
+                                "model_file text"  \
+                                ",hidlayer_num int" \
+                                ",hidlayer_nerouns text"\
+                                ",dropout real"\
+                                ",activatieon text"\
+                                ",samples int"\
+                                ",tests int"\
+                                ",train_loss real"\
+                                ",train_acc real"\
+                                ",valid_loss real"\
+                                ",valid_acc real"\
+                                ",test_acc real);")
+    
+
+    def CloseDb(self):
+        ''' 关闭数据库
+        '''    
+        self.conn.close()
+  
+
+    def IsExist(self,model_file):
+        ''' 判断记录是否存在
+        '''
+        sql="select * from data where model_file='%s' ;" %(model_file)
+        cur = self.conn.execute(sql)
+        r_num=len(cur.fetchall())
+        return r_num>0
+
+
+    def Add(self,model_file,model,history,score,y_predict,y_test,samples):
+        ''' 添加数据库记录
+        @param model_file:模型文件,不含扩展名,含参数表达 "hidlayer_num-hidlayer_nerouns-dropout-activation",eg."2-(300,500)-0.2-linear"
+        @param model: 模型
+        @param history:训练状态
+        @param score:评估[loss,acc]
+        @param y_predict,y_test:预测值,真实值
+        @param samples:训练样本数
+        '''
+        str_args=model_file.split('-')                     #分离参数
+        train_loss=history.history['loss'][-1]             #训练时loss
+        train_acc=history.history['acc'][-1]               #训练时acc
+        valid_loss=score[0]                                #校验时loss
+        valid_acc=score[1]                                 #校验时acc
+        y_p=(np.array(y_predict)>0.5).astype(np.int32)     
+        y_t=np.array(y_test)
+        test_acc=1-((np.abs(y_p-y_t)).sum()/2)/len(y_test) #预测结果:准确率
+        #添加记录
+        sql="insert into data(model_file,hidlayer_num,hidlayer_nerouns,dropout,activatieon,samples,tests"\
+                         ",train_loss,train_acc,valid_loss,valid_acc,test_acc)"\
+                         "values('%s',%s,'%s',%s,'%s',%d,%d"\
+                         ", %f,%f, %f,%f, %f)"\
+                         %(model_file.replace(' ',''),str_args[0],str_args[1],str_args[2],str_args[3],samples,y_test.shape[0]
+                         ,train_loss,train_acc,valid_loss,valid_acc,test_acc)
+        self.conn.execute(sql)
+        self.conn.commit()
+
+    def GetBestModel(self):
+        '''获取最佳模型参数
+        @return (model_file,train_acc,valid_acc,test_acc):返回(模型名称,训练准确率,校验准确率,测试准确率)
+        '''
+        #select * from B_TXF_SHOUFCDCS where F_NB_SHOUFZBH in (select min(F_NB_SHOUFZBH) from B_TXF_SHOUFCDCS)
+        sql="select model_file,train_acc,valid_acc,test_acc from data  where test_acc in(select max(test_acc) from data limit 1 offset 0)"
+        #查询
+        cur=self.conn.execute(sql)
+        self.conn.commit()
+        row=cur.fetchone()
+        return (row[0],row[1],row[2],row[3])
+'''class Data[End]''''''''''''''''''''''''''''''''''''''''''''''''
+'''
+
+
+def load_data(num_classes=10):
+    ''' 数据加载
+    @param num_classes:分类数
+    @return (x_train,y_train,x_test,y_test)
+        x_train --- 训练输入,np.narray(60000 x 784),每行表示一张图像(28x28)
+        y_train --- 训练输出标签,np.narray(60000 x 10)
+        x_test ---- 测试输入,np.narray(10000 x 784),每行表示一张图像(28x28)
+        y_test ---- 测试输出标签,np.narray(10000 x 10)
+    '''
+    # the data, split between train and test sets
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
+    x_train = x_train.reshape(60000, 784)
+    x_test = x_test.reshape(10000, 784)
+    x_train = x_train.astype('float32')
+    x_test = x_test.astype('float32')
+    x_train /= 255
+    x_test /= 255
+    # convert class vectors to binary class matrices
+    y_train = keras.utils.to_categorical(y_train, num_classes)
+    y_test = keras.utils.to_categorical(y_test, num_classes)
+    return (x_train,y_train,x_test,y_test)
+
+
+def create_model(hidlayer,neuron,dropout,activation,num_classes):
+    ''' 创建模型
+    @param hidlayer:隐层层数,int
+    @param neuron:隐层神经元数目,tutle(hidlayer x 1),分别表示每层神经元数目
+    @param dropout:dropout系数,0.0-1.0,浮点型
+    @param activation:激活函数,选择以下之一(linear,ReLu,tanh)
+    @return model:网络模型
+    '''
+    model = Sequential()
+    for i in range(hidlayer):
+        if i==0:
+            model.add(Dense(neuron[i], activation=activation, input_shape=(784,)))
+        else:
+            model.add(Dense(neuron[i], activation=activation))
+        model.add(Dropout(dropout))
+    model.add(Dense(num_classes, activation='softmax'))
+    return model
+
+
+def create_models(to_path,hidlayers,neurons,dropouts,activations,num_classes,overwrite=False):
+    ''' 批量创建模型
+       模型由四个参数(隐层层数,隐层神经元数目,dropout系数,激活函数)组成,输出保存为yaml文件.
+    @param to_path:模型存放目录,string
+    @param hidlayers:隐层层数,tutle(n1 x 1),eg. (1,2,3,4,5)
+    @param neurons:隐层神经元数目,dict[int:[turtle(n x 1),...]],eg.{2:[(300,400)],3:[(300,400,500),(400,300,500)]}
+    @param dropouts:dropout系数,(n3 x 1),eg.(0.2,0.4,0.6,0.8)
+    @param activations:激活函数,(n4 x 1),eg.('linear','ReLu','tanh')
+    @param overwrite:是否覆盖,True-覆盖已存在的模型文件
+    '''
+    #创建目录
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
+    #创建模型
+    for v1 in hidlayers:
+       for v2 in neurons[v1]:
+            for v3 in dropouts: 
+                for v4 in activations:
+                    filepath='%s/%s-%s-%s-%s.yaml' %(to_path,v1,str(v2).replace(' ',''),v3,v4)
+                    filepath_exists=os.path.exists(filepath)
+                    print('model file:%s,exists:%d' %(filepath,filepath_exists))
+                    #模型不存在或覆盖处理
+                    if(not filepath_exists or overwrite):
+                        model=create_model(v1,v2,v3,v4,num_classes)
+                        str_yaml=model.to_yaml()
+                        del model
+                        with open(filepath,'w') as f:
+                            f.write(str_yaml)
+
+
+def train(model,x_train,y_train,validation_split=0.2,batch_size=128,epochs=10):
+    ''' 训练
+    @param model:网络模型
+    @param x_train:训练输入数据
+    @param y_train:训练输出标签
+    @param validation_split:从训练数据中划分一定比例用于验证,0.0-1.0
+    @param batch_size:
+    @param epochs:
+    @return history:训练状态
+    '''
+    model.summary()
+    model.compile(loss='categorical_crossentropy',
+              optimizer=RMSprop(),
+              metrics=['accuracy'])
+    history = model.fit(x_train, y_train,
+                    batch_size=batch_size,
+                    epochs=epochs,
+                    verbose=1)
+    return history
+
+
+def evaluate(model,x,y):
+    ''' 评估
+    @param model:模型
+    @param x:评估输入
+    @param y:评估输出
+    @return score:得分(loss,acc)
+    '''
+    score = model.evaluate(x, y, verbose=0)
+    return score
+
+
+def predict(model,x):
+    ''' 测试
+    @param model:模型
+    @param x:测试数据
+    @return y:测试结果
+    '''
+    return model.predict(x)
+
+
+def params():
+    ''' 程序参数
+    '''
+    #程序描述
+    description='多层神经网络训练,' \
+                '  hidlayers与neurons长度必须匹配,' \
+                '  模型文件输出路径: {datapath}/model,' \
+                '  数据库文件: {datapath}/state.db'
+    # Create ArgumentParser() object
+    parser = argparse.ArgumentParser(description=description);
+    # Add argument
+    parser.add_argument('--fun',type=int, help='脚本功能[0-组合训练,1-查询最佳模型,2-模型预测],默认0. eg. --fun 0',default=0);
+    parser.add_argument('--max_trains',type=int, help='最大训练数目,默认所有. eg. --max_trains 0',default=0);
+    parser.add_argument('--max_tests', type=int, help='最大测试数目,默认所有. eg. --max_tests 0',default=0);
+    parser.add_argument('--batch_size', type=int, help='批数量. eg. --batch_size 128', default=128);
+    parser.add_argument('--epochs', type=int, help='迭代次数. eg. --epochs 10', default=10);
+    parser.add_argument('--hidlayers', type=str, help='隐层层数. eg. --hidlayers "2,3"', default='2,3');
+    parser.add_argument('--neurons', type=str, help='隐层神经元数目. eg. --neurons "500,600"', default='600,700');
+    parser.add_argument('--dropouts', type=str, help='dropout系数. eg. --dropouts "0.2,0.4"', default='0.2,0.4');
+    parser.add_argument('--activations', type=str, help='激活函数. eg. --activations "linear,relu,tanh"', default='linear,relu,tanh');
+    parser.add_argument('--datapath', type=str, help='数据目录. eg. --datapath "./temp"', default='./temp');
+    parser.add_argument('--modelfile', type=str, help='模型参数文件. eg. --modelfile "./temp/temp.h5"', default='');
+    parser.add_argument('--testpath', type=str, help='预测图像目录. eg. --testpath "./test"', default='./test');
+    parser.add_argument('--savefile', type=str, help='预测结果. eg. --savefile "./test/result.txt"', default='./test/result.txt');
+    parser.add_argument('--dbg', type=int, help='是否调试. eg. --dbg 0', default=0);
+    # Parse argument
+    arg = parser.parse_args();
+    #调试
+    pdb.set_trace() if arg.dbg==1 else ''
+    #--------------------------
+    return arg
+
+
+def coms_train(arg):
+    '''超参组合训练
+    '''
+    #参数处理
+    num_classes=10
+    hidlayers=[int(x) for x in arg.hidlayers.split(',')]
+    nerouns=[int(x) for x in arg.neurons.split(',')]
+    hidnerouns={}
+    for i in hidlayers:
+        hidnerouns[i]=list(itertools.permutations(nerouns,i))  
+    activations=arg.activations.split(',')
+    dropouts=[float(x) for x in arg.dropouts.split(',')]
+    to_path='%s/model' %(arg.datapath)   #模板输出路径
+    db_path='%s/state.db' %(arg.datapath)#数据库文件路径
+    if not os.path.exists(to_path):
+        os.makedirs(to_path)
+    #---------------------
+    #加载数据
+    (x_train,y_train,x_test,y_test)=load_data(num_classes)
+    #打乱数据集
+    index = [i for i in range(len(y_train))]  
+    random.shuffle(index) 
+    x_train = x_train[index]
+    y_train = y_train[index]
+    #重设训练测试量
+    if arg.max_trains>0 and arg.max_trains<len(x_train):
+        x_train=x_train[:arg.max_trains,:]
+        y_train=y_train[:arg.max_trains,:]
+    if arg.max_tests>0 and arg.max_tests<len(x_test):
+        x_test=x_test[:arg.max_tests,:]
+        y_test=y_test[:arg.max_tests,:]
+    #数据库管理
+    db=Data(db_path)
+    #批量创建模型
+    create_models(to_path,hidlayers,hidnerouns,dropouts,activations,num_classes)
+    gc.collect()
+    #遍历模型
+    #model = Sequential()
+    files_yaml=os.listdir(to_path)
+    total_trains=len(files_yaml) #所有训练模型个数
+    cur_train=0                  #当前训练模型
+    for s in files_yaml:
+        sfile='%s/%s' %(to_path,s)
+        cur_train+=1
+        print('\r\n')
+        print('model(%d/%d):%s'%(cur_train,total_trains,sfile))
+        model_file=os.path.basename(sfile)       #模型名称,含扩展名,不含目录
+        vals=os.path.splitext(model_file)        #[SName,ext]
+        model_h5file='%s/%s.h5'%(to_path,vals[0])#模型参数文件
+        #仅处理yaml文件
+        if len(vals)==2 and vals[1]=='.yaml':
+            #不重复训练
+            if not db.IsExist(vals[0]):
+                with open(sfile,'r') as f:
+                    str_yaml=f.read()
+                    model=keras.models.model_from_yaml(str_yaml) #加载模型
+                    history=train(model,x_train,y_train)         #训练
+                    score=evaluate(model,x_test,y_test)          #评估
+                    y=predict(model,x_test)                      #测试
+                    model.save(model_h5file)                     #保存模型参数
+                    #添加记录
+                    db.Add(vals[0],model,history,score,y,y_test,y_train.shape[0])
+                    del model
+                    gc.collect()
+
+
+def get_best_model(arg):
+    '''获取最佳模型参数文件
+    '''
+    db_path='%s/state.db' %(arg.datapath)#数据库文件路径
+    #数据库管理
+    db=Data(db_path)
+    #查询
+    best_rd=db.GetBestModel()
+    model_file='%s.h5' %(best_rd[0])
+    print('model_file:',model_file)
+    print('train_acc:' ,best_rd[1])
+    print('valid_acc:' ,best_rd[2])
+    print('test_acc:'  ,best_rd[3])
+
+
+def get_img(sfile):
+    '''图像读取并预处理:28x28
+    @return img:返回[28x28,1]行向量
+    '''
+    img=cv2.imread(sfile,cv2.IMREAD_GRAYSCALE) #读取图像
+    #图像预处理 ...
+    img.resize((28,28))                           #重置图像大小
+    return img.reshape((1,28*28))                       #返回行向量
+
+
+def predict_files(arg):
+    '''模型预测,每一个文件都是一个单独的数字
+    '''
+    model_file=arg.modelfile #模型参数文件
+    testpath=arg.testpath    #测试目录
+    savefile=arg.savefile    #测试结果保存文件
+    if not os.path.exists(model_file):
+        print('model_file:%s not exists!' %(model_file))
+        return
+    if not os.path.exists(testpath):
+        print('testpath:%s not exists!' %(testpath))
+        return
+    #加载模型
+    #model = Sequential()
+    model = load_model(model_file)
+    #检索图像文件列表
+    files=os.listdir(testpath)
+    with open(savefile,'w') as f:
+        for s in files:
+            sfile='%s/%s' %(testpath,s)
+            print('file:',sfile)
+            x=get_img(sfile)
+            y=predict(model,x)
+            y_index=np.where(y==y.max())
+            f.write('%s:%d:%s\r\n'%(s,y_index[1][0],y))
+
+
+def main(arg):
+    ''' 主函数
+    '''
+    if arg.fun==0:   #超参组合批量训练
+        coms_train(arg)
+    elif arg.fun==1: #获取最佳训练模型
+        get_best_model(arg)
+    elif arg.fun==2: #模型预测
+        predict_files(arg)
+
+
+#==============================
+if __name__=='__main__':
+    arg=params()
+    print('arguments:')
+    print('--fun:',arg.fun)
+    print('--max_trains:',arg.max_trains)
+    print('--max_tests:',arg.max_tests)
+    print('--batch_size:',arg.batch_size)
+    print('--epochs:',arg.epochs)
+    print('--hidlayers:',arg.hidlayers)
+    print('--neurons:',arg.neurons)
+    print('--dropouts:',arg.dropouts)
+    print('--activations:',arg.activations)
+    print('--datapath:',arg.datapath)
+    print('--modelfile:',arg.modelfile)
+    print('--testpath:',arg.testpath)
+    print('--savefile:',arg.savefile)
+    print('--dbg:',arg.dbg)
+    print('--------------end arguments-----------------')
+    main(arg)
+
