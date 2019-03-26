@@ -1,0 +1,43 @@
+科普帖：深度学习中GPU和显存分析
+    https://zhuanlan.zhihu.com/p/31558973
+
+TensorFlow会话的配置项
+    https://www.jianshu.com/p/b9a442bcfd2e
+
+keras 与tensorflow 混合使用
+    https://www.cnblogs.com/flyu6/p/7978456.html
+
+TensorFlow和Keras解决大数据量内存溢出问题
+    https://blog.csdn.net/leadai/article/details/79999785
+
+keras中文文档笔记17——将Keras作为tensorflow的精简接口
+    https://blog.csdn.net/zhzhx1204/article/details/77435413
+
+keras指定运行时显卡及限制GPU用量
+    https://blog.csdn.net/A632189007/article/details/77978058
+
+SVM算法原理及Python实现
+    https://blog.csdn.net/laobai1015/article/details/82763033
+
+详解VGG16以及启发
+    https://blog.csdn.net/orangefly0214/article/details/81511964
+
+深入理解GoogLeNet结构（原创）
+    https://blog.csdn.net/docrazy5351/article/details/78993269
+
+BP算法从原理到python实现
+    https://www.cnblogs.com/cloud-ken/p/8028772.html
+
+神经网络中BP算法的原理与用Python实现源码
+    https://blog.csdn.net/program_developer/article/details/78977798
+    
+BP算法从原理到python实现
+    https://www.cnblogs.com/cloud-ken/p/8028772.html
+    
+机器学习面试必知：梯度消失和梯度爆炸
+    https://blog.csdn.net/qq_25737169/article/details/78847691
+
+SVM算法原理及Python实现
+    https://blog.csdn.net/laobai1015/article/details/82763033
+
+

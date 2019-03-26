@@ -3,6 +3,7 @@
 
 ''' 把ipynb格式文件转换为py格式文件
  遍历文件夹,搜索*.ipynb,在源目录转换为*.py
+    $jupyter nbconvert --to script <file>
 
     使用范例:
         $python3 CvtIpynb2py.py /path

@@ -51,6 +51,7 @@ import os
 import numpy as np
 from scipy.io import loadmat
 import pandas as pd
+import shutil
 class ImageNetData(object):
     def __init__(self, data_path):
         self.df,self.labels_cn=self.__LoadData(data_path)
@@ -132,8 +133,41 @@ class ImageNetData(object):
     #获取DataFrame
     def get_df(self):
         return self.df
+       
+    #去掉目录中文信息
+    def rm_cn_name(self,path):
+        '''去掉目录中文信息
+            <WNDID>_<cn name>
+            搜索第一个"_"保留之前内容，如：n01440764_丁鲷 => n01440764
+        @param path 训练目录，每一个子目录为一个分类
+        '''
+        sub_dirs=os.listdir(path)
+        for sub_path in sub_dirs:
+            npos=sub_path.find('_')
+            if npos>0:
+                src='%s/%s'%(path,sub_path)
+                dst='%s/%s'%(path,sub_path[:npos])
+                if not os.path.exists(dst):
+                    shutil.move(src, dst)
 
-        
+    #添加目录中文信息
+    def add_cn_name(self,path):
+        '''添加目录中文信息
+            <WNDID>_<cn name>
+            搜索"_"，如果不存在，则添加中文信息，如：n01440764 => n01440764_丁鲷
+        @param path 训练目录，每一个子目录为一个分类
+        '''
+        sub_dirs=os.listdir(path)
+        for sub_path in sub_dirs:
+            npos=sub_path.find('_')
+            if npos==-1:
+                src='%s/%s'%(path,sub_path)
+                f_info=self.get_info_from_wnid(sub_path)
+                if not f_info is None:
+                    dst='%s/%s_%s'%(path,sub_path,f_info['cn_name'])
+                    if not os.path.exists(dst):
+                        shutil.move(src, dst)
+
 #======================
 if __name__=='__main__':
     #测试

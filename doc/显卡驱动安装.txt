@@ -151,3 +151,114 @@ cat /usr/local/cuda/version.txt
 cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
 
 
+==================================================
+==================================================
+* 升级 CUDA版本到 10                              *
+==================================================
+查看当前显卡版本：384.130
+hjw@hjw:/usr$ nvidia-smi
+Fri Mar 15 09:25:48 2019       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 384.130                Driver Version: 384.130                   |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 108...  Off  | 00000000:65:00.0  On |                  N/A |
+|  0%   46C    P5    22W / 250W |    176MiB / 11171MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|    0      1323      G   /usr/lib/xorg/Xorg                           121MiB |
+|    0      2671      G   compiz                                        43MiB |
+|    0      3166      G   fcitx-qimpanel                                 9MiB |
++-----------------------------------------------------------------------------+
+
+
+--------------------------
+下载显卡驱动
+    https://www.geforce.cn/drivers
+    选择：GeForce / Geforce 10 Series / GeForce GTX 1080Ti / LInux 64-bit / Chinese(Simplified)
+    下载：418.43版本
+          NVIDIA-Linux-x86_64-418.43.run
+    ReadMe:
+        https://us.download.nvidia.cn/XFree86/Linux-x86_64/418.43/README/index.html
+    install:
+        https://us.download.nvidia.cn/XFree86/Linux-x86_64/418.43/README/installdriver.html
+
+--------------------------
+查看CUDA版本兼容的显卡版本：显卡版本需要匹配或者超越cuda的版本要求
+https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
+Table 1. CUDA Toolkit and Compatible Driver Versions 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+CUDA Toolkit                    Linux x86_64 Driver Version  Windows x86_64 Driver Version
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+CUDA 10.1.105                   >= 418.39                    >= 418.96
+CUDA 10.0.130                   >= 410.48                    >= 411.31
+CUDA 9.2 (9.2.148 Update 1)     >= 396.37                    >= 398.26
+CUDA 9.2 (9.2.88)               >= 396.26                    >= 397.44
+CUDA 9.1 (9.1.85)               >= 390.46                    >= 391.29
+CUDA 9.0 (9.0.76)               >= 384.81                    >= 385.54
+CUDA 8.0 (8.0.61 GA2)           >= 375.26                    >= 376.51
+CUDA 8.0 (8.0.44)               >= 367.48                    >= 369.30
+CUDA 7.5 (7.5.16)               >= 352.31                    >= 353.66
+CUDA 7.0 (7.0.28)               >= 346.46                    >= 347.62
+
+-------------------------
+下载CUDA
+    https://developer.nvidia.com/cuda-downloads
+    选择：Linux /x86_64 / Ubuntu / 16.04 / runfile(local)
+    下载版本：cuda_10.1.105_418.39_linux.run (x)
+             cuda_10.0.130_410.48_linux.run (v)
+
+------------------------
+下载cuDNN
+    https://developer.nvidia.com/rdp/cudnn-archive
+        Download cuDNN v7.4.2 (Dec 14, 2018), for CUDA 10.0
+            cuDNN Library for Linux
+                cudnn-10.0-linux-x64-v7.4.2.24.tgz
+
+================================================================
+参考资料：
+关于CUDA，cuDNN，TF，CUDA驱动版本兼容问题
+    https://blog.csdn.net/xs11222211/article/details/84782046
+基本概念
+    CUDA：用于GPU编程的语言，跑TF的时候用了GPU，TF里面很多函数（或者依赖库）是CUDA语言编写的。不同TF版本需要不同的CUDA。
+    cuDNN：NVIDIA为深度学习，矩阵运算写的一个加速库。CUDA版本必须和cuDNN版本匹配。cuDNN和TF版本匹配与否则无所谓（不过CUDA和TF版本必须匹配，所以cuDNN版本和TF版本是间接依赖关系）。
+    TF：这个没什么好说的。个人经验，别用太新的，如果每次都用最新的，那么进而导致CUDA也要不断更新
+    CUDA驱动版本：保持最新就好了，CUDA驱动版本要求和CUDA版本匹配，而CUDA又要求cuDNN/TF是匹配的。不过CUDA驱动版本是向下兼容的，所以保持最新就没事。输入nvidia-smi可以查看：
+    
+-------------------
+Tensorflow不同版本要求与CUDA及CUDNN版本对应关系
+    https://tensorflow.google.cn/install/source
+-------------------
+在ubuntu上安装多个版本的CUDA，并且可以随时切换
+    https://blog.csdn.net/ksws0292756/article/details/80120561
+    hjw@hjw:/usr/local$ ll
+    lrwxrwxrwx  1 root root   19 2月  18 21:30 cuda -> /usr/local/cuda-9.0/
+    drwxr-xr-x 18 root root 4096 2月  18 21:30 cuda-9.0/
+
+    文件类型是symbolic link，而指向的目录正是/usr/local/cuda-9.0，当我们想使用cuda-9.1版本时，只需要删除该软链接，然后重新建立指向cuda-9.1版本的软链接即可（注意名称还是cuda，因为要与bashrc文件里设置的保持一致）
+    $sudo rm -rf cuda
+    $sudo ln -s /usr/local/cuda-9.1 /usr/local/cuda
+------------------
+显卡驱动卸载与安装（提前下载好最新版本驱动：http://www.nvidia.com/Download/index.aspx?lang=cn）
+    https://blog.csdn.net/lifuxian1994/article/details/81113365 
+
+    进入控制台，Ctrl+Alt+F1
+    关闭图形界面，sudo service lightdm stop
+    卸载现有的显卡驱动，sudo apt-get remove nvidia*
+    安装新驱动, sh NVIDIA-Linux-xxxxxxxxxx.run（注意要提前下载好最新版本驱动：http://www.nvidia.com/Download/index.aspx?lang=cn）
+    完成
+    重启（或者 sudo service lightdm start）
+------------------
+卸载CUDA
+    https://blog.csdn.net/lifuxian1994/article/details/81113365 
+    安装好最新版本的显卡驱动后，准备cuda的卸载。（以cuda6.5为例）
+    卸载原有cuda，两种方式（.deb和.run两种方式安装，卸载方法不同）
+    .run方法卸载，sudo /usr/local/cuda-6.5/bin/uninstall_cuda-6.5.pl（有这个文件就说明是之前用.run文件安装的，没有则是用deb文件安装的）
+    .deb方法卸载，sudo apt-get autoremove --purge cuda
+

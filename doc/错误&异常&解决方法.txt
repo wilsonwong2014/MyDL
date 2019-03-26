@@ -1,0 +1,5 @@
+TensorFlow in nvidia-docker: failed call to cuInit: CUDA_ERROR_UNKNOWN
+    https://stackoverflow.com/questions/43992230/tensorflow-in-nvidia-docker-failed-call-to-cuinit-cuda-error-unknown
+    重启系统
+
+

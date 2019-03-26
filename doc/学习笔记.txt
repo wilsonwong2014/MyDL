@@ -256,6 +256,10 @@ http://fr.archive.ubuntu.com/ubuntu/ trusty/main amd64 Packages
 http://archive.ubuntu.com/ubuntu/ trusty/main amd64 Packages
 
 
+====================
+Ubuntu修改文件权限
+    https://blog.csdn.net/slwhy/article/details/78876237
+
 ===============================
 2019-03-07 22:41:24 
 keras下载数据路径问题

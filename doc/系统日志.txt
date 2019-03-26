@@ -333,6 +333,7 @@ Thu Jan 31 19:39:21 2019
   2.移动docker根目录到新位置
     $sudo mv /var/lib/docker /home/hjw/docker -r
   3.创建软链接
+    # ln -s <source> <target>
     $ln -s /home/hjw/docker /var/lib/docker
   4.启动docker服务
     $service docker start
@@ -456,48 +457,66 @@ $sudo apt-get install rar
 ============================================
 
 ============================================
-2019-03-06 10:44:08 
-$sudo pip3 install opencv-contrib-python
-    无用
+    ++++++++++++reinstall del begin++++++++++++
+    2019-03-06 10:44:08 
+    $sudo pip3 install opencv-contrib-python
+        无用
 
-===============================
-2019-03-07 11:22:46 
-安装飞秋
-    $sudo apt-get install iptux 
+    ===============================
+    2019-03-07 11:22:46 
+    安装飞秋
+        $sudo apt-get install iptux 
 
-===============================
-2019-03-07 22:41:24 
-keras下载数据路径问题
-    https://github.com/keras-team/keras/blob/master/keras/utils/data_utils.py/#L123
-    详细查看 get_file()源码。
-    默认为 ~/.keras，如果没有访问权限，则改为：/tmp/.keras
-解决方法：
-    修改 ~/.keras权限
-    $sudo chmode 777 ~/.keras
+    ===============================
+    2019-03-07 22:41:24 
+    keras下载数据路径问题
+        https://github.com/keras-team/keras/blob/master/keras/utils/data_utils.py/#L123
+        详细查看 get_file()源码。
+        默认为 ~/.keras，如果没有访问权限，则改为：/tmp/.keras
+    解决方法：
+        修改 ~/.keras权限
+        $sudo chmode 777 ~/.keras
 
-=============================
-2019-03-12 19:48:44 
-$sudo pip3 install pipenv
-    未使用
+    =============================
+    2019-03-12 19:48:44 
+    $sudo pip3 install pipenv
+        未使用
 
-===========================
-2019-03-13 11:07:09 
-doc 生成器环境安装
-$sudo pip3 install sphinx sphinx-autobuild sphinx_rtd_theme recommonmark
+    ===========================
+    2019-03-13 11:07:09 
+    doc 生成器环境安装
+    $sudo pip3 install sphinx sphinx-autobuild sphinx_rtd_theme recommonmark
 
-参考：advisor-master
-    # Advisor Docs
-    ## Installation
+    参考：advisor-master
+        # Advisor Docs
+        ## Installation
 
-    ```bash
-    pip install sphinx sphinx-autobuild sphinx_rtd_theme recommonmark
-    ```
-    ## Deployment
-    Change config refer to https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html .
-    ```bash
-    make html
-    ```
-    ```bash
-    open build/html/index.html
-    ```
+        ```bash
+        pip install sphinx sphinx-autobuild sphinx_rtd_theme recommonmark
+        ```
+        ## Deployment
+        Change config refer to https://www.xncoding.com/2017/01/22/fullstack/readthedoc.html .
+        ```bash
+        make html
+        ```
+        ```bash
+        open build/html/index.html
+        ```
+
+
+    cpu：pip3 install --upgrade --ignore-installed tensorflow
+
+    gpu：pip3 install --upgrade --ignore-installed tensorflow-gpu
+    ++++++++++++reinstall del end  ++++++++++++
+-----------------------
+2019-03-19 08:25:25 
+安装贝叶斯优化模块
+$sudo pip3 install bayesian-optimization
+
+----------------------
+2019-03-21 22:25:43 
+    https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex.
+sudo apt-get install pandoc
+$sudo apt-get install texlive-xetex
+
 
