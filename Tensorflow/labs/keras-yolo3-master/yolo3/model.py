@@ -232,17 +232,21 @@ def tiny_yolo_body(inputs, num_anchors, num_classes):
 def yolo_head(feats, anchors, num_classes, input_shape, calc_loss=False):
     """Convert final layer features to bounding box parameters."""
     '''解析模型输出层 y1,y2或y3
+        公式推导参考损失函数 yolo_loss
     @param feats       模型输出层y1,y2或y3 ,shape=>(batch_size,height,width,25)
+                       feats[...,0:2]=>(x,y),预测原始值为grid的偏移量
+                       feats[...,2:4]=>(w,h),预测原始值为与anchor大小比值的对数值
+                       以上预测值的模式与yolo_loss相关.
     @param anchors     通过掩码提取的锚点序列(有3个) ,shape=>(3,2)
     @param num_classes 检测类别数(20)
     @param input_shape 模型输入大小(416,416)
     @param calc_loss   是否计算loss,训练模式时为True
     
     @return box_xy,box_wh,box_cofidence,box_class_probs
-        box_xy          边框中心坐标预测,shape=>(batch_size,height,width,num_anchors,2 )
-        box_wh          边宽高度和高度  ,shape=>(batch_size,height,width,num_anchors,2 )
-        box_confidence  预测得分数      ,shape=>(batch_size,height,width,num_anchors,1 )
-        box_class_probs 检测类别        ,shape=>(batch_size,height,width,num_anchors,20)
+        box_xy          边框中心坐标预测修正值,全图大小相对值，0-1之间  ,shape=>(batch_size,height,width,num_anchors,2 )
+        box_wh          边宽高度和高度预测修正值，全图大小比例值，0-1之间,shape=>(batch_size,height,width,num_anchors,2 )
+        box_confidence  预测得分数预测修正值     ,shape=>(batch_size,height,width,num_anchors,1 )
+        box_class_probs 检测类别预测修正值       ,shape=>(batch_size,height,width,num_anchors,20)
     '''
     num_anchors = len(anchors) #3
     # Reshape to batch, height, width, num_anchors, box_params.
@@ -254,37 +258,9 @@ def yolo_head(feats, anchors, num_classes, input_shape, calc_loss=False):
     grid_y.shape=>(height,width,1,1)
     grid_x.shape=>(height,width,1,1)
     grid.shape  =>(height.width,1,2)
-        范例：height=3,width=3
-            grid_y=array( [[[[0]],
-                            [[0]],
-                            [[0]]],
-                           [[[1]],
-                            [[1]],
-                            [[1]]],
-                           [[[2]],
-                            [[2]],
-                            [[2]]]], dtype=int32)
-            grid_x=array( [[[[0]],
-                            [[1]],
-                            [[2]]],
-                           [[[0]],
-                            [[1]],
-                            [[2]]],
-                           [[[0]],
-                            [[1]],
-                            [[2]]]], dtype=int32)
-            grid=array(   [[[[0, 0]],
-                            [[1, 0]],
-                            [[2, 0]]],
-                           [[[0, 1]],
-                            [[1, 1]],
-                            [[2, 1]]],
-                           [[[0, 2]],
-                            [[1, 2]],
-                            [[2, 2]]]], dtype=int32)
-
     '''
-    grid_shape = K.shape(feats)[1:3] # height, width; feats.shape=>(batch_size,height,width,num_filters); grid_shape:(height,width)
+    # height, width; feats.shape=>(batch_size,height,width,num_filters); grid_shape:(height,width)
+    grid_shape = K.shape(feats)[1:3] 
     grid_y = K.tile(K.reshape(K.arange(0, stop=grid_shape[0]), [-1, 1, 1, 1]),
         [1, grid_shape[1], 1, 1])
     grid_x = K.tile(K.reshape(K.arange(0, stop=grid_shape[1]), [1, -1, 1, 1]),
@@ -296,23 +272,12 @@ def yolo_head(feats, anchors, num_classes, input_shape, calc_loss=False):
         feats, [-1, grid_shape[0], grid_shape[1], num_anchors, num_classes + 5])
 
     # Adjust preditions to each spatial grid point and anchor size.
-    '''
-    公式推导
-        https://blog.csdn.net/jesse_mx/article/details/53925356
-    feats[...,:2] --- 预测的x,y偏移量，相对于grid cell
-    K.sigmoid(feats[...,:2]) --- 把预测值限定在0-1范围
-    gird --- grid cell坐标
-    grid_shape[::-1] --- grid_shape范式的 h x w,通过翻转[::-1]，转为 w x h适应xy坐标模式
-    (K.sigmoid(feats[..., :2]) + grid) / K.cast(grid_shape[::-1], K.dtype(feats)) --- 把xy坐标处理为相对于图像左上角的偏移(0-1)
-    
-    box_wh 同理
-    '''
-    #先预测为grid的偏移     ，然后换算为归一化的模型输入的左上角偏移
-    box_xy = (K.sigmoid(feats[..., :2]) + grid) / K.cast(grid_shape[::-1], K.dtype(feats))        
-    #先预测为anchors尺寸比例，然后换算为归一化模型输入的尺寸比例
+    #grid的偏移量 => 全图大小的相对偏移量,0-1之间
+    box_xy = (K.sigmoid(feats[..., :2]) + grid) / K.cast(grid_shape[::-1], K.dtype(feats))
+    #与anchor大小比值的对数值 => 全图大小比例值,没有做限值(0-1)处理，预测宽高有可能大于原图大小，在后续处理中做边界处理
     box_wh = K.exp(feats[..., 2:4]) * anchors_tensor / K.cast(input_shape[::-1], K.dtype(feats))  
-    box_confidence = K.sigmoid(feats[..., 4:5])
-    box_class_probs = K.sigmoid(feats[..., 5:])
+    box_confidence = K.sigmoid(feats[..., 4:5]) #限值0-1之间
+    box_class_probs = K.sigmoid(feats[..., 5:]) #限值0-1之间
 
     if calc_loss == True:
         return grid, feats, box_xy, box_wh
@@ -321,10 +286,9 @@ def yolo_head(feats, anchors, num_classes, input_shape, calc_loss=False):
 
 def yolo_correct_boxes(box_xy, box_wh, input_shape, image_shape):
     '''Get corrected boxes'''
-    '''修正boxes值为真实值
-        preprocess_true_boxes,get_random_data逆向操作
-    @param box_xy      预测值,      shape=>(batch_size,height,width,num_anchors,2)
-    @param box_wh      预测值,      shape=>(batch_size,height,width,num_anchors,2)
+    '''还原原始图像真实物理大小
+    @param box_xy      预测值,相对全图大小偏移量,0-1之间,shape=>(batch_size,height,width,num_anchors,2)
+    @param box_wh      预测值,相对全图大小比例值，       shape=>(batch_size,height,width,num_anchors,2)
     @param input_shape 模型输入尺寸,val=>(416,416)
     @param image_shape 图像真实尺寸,shape=>(?,?)
     @return boxes
@@ -337,7 +301,8 @@ def yolo_correct_boxes(box_xy, box_wh, input_shape, image_shape):
     new_shape = K.round(image_shape * K.min(input_shape/image_shape)) #原始图像等比缩放后的shape
     offset = (input_shape-new_shape)/2./input_shape                   #原始图像等比缩放后与模型输入shape的边偏移量(归一化)
     scale = input_shape/new_shape                                     #图像缩放倍数
-    box_yx = (box_yx - offset) * scale                                #真实数据复原,box_yx-offset为get_random_data的box[:, [0,2]] = box[:, [0,2]]*scale + dx的逆向操作
+    #真实数据复原,box_yx-offset为get_random_data的box[:, [0,2]] = box[:, [0,2]]*scale + dx的逆向操作
+    box_yx = (box_yx - offset) * scale 
     box_hw *= scale                                                   #真实数据复原
 
     box_mins = box_yx - (box_hw / 2.)
@@ -645,9 +610,38 @@ def yolo_loss(args, anchors, num_classes, ignore_thresh=.5, print_loss=False):
 
     '''
     '''损失函数
+        https://blog.csdn.net/jesse_mx/article/details/53925356
+        标注数据y_true的x,y,w,h说明：
+        1. x,y数据说明：
+          1.1. 原始数据x,y为全图的相对偏移量，值范围在0-1之间
+          1.2. x,y在yolo_loss修正为grid的偏移量，值范围在0-1之间
+          1.3. 因此网络输出的预测值y_pred为grid的偏移量，值范围在0-1之间
+          1.4. 修正/反修正过程
+               修  正：全图相对偏移量=>grid偏移量
+                  raw_true_xy = y_true[l][..., :2]*grid_shapes[l][::-1] - grid
+               反修正:grid偏移量=>全图相对偏移量
+                  feats[...,:2] --- 预测值 x,y；grid偏移量
+                  grid ------------ 单元格坐标值:整数
+                  K.sigmoid(feats[...,:2]) --- 把预测值限定在0-1之间
+                  K.sigmoid(feats[...,:2])+grid --- 把预测值修正为绝对偏移量
+                  box_xy=(K.sigmoid(feats[...,:2])+grid)/K.cast(grid_shape[::-1],K.dtype(feats)) 
+                        ---把预测值修正为grid_shape的相对偏移
+        2. w,h数据说明：
+          2.1. 原始数据w,h为全图的相对偏移量，值范围在0-1之间
+          2.2. w,h在yolo_loss修正为与anchor大小比例的对数值
+          2.3. 因此网络输出的预测值y_pred为anchor大小比例的对数值
+          2.4. 修正/反修正过程
+               修  正:全图相对偏移量=>与anchor大小比例的对数值
+                    raw_true_wh = K.log(y_true[l][..., 2:4] / anchors[anchor_mask[l]] * input_shape[::-1])                
+               反修正:与anchor大小比例的对数值=>全图相对偏移量
+                    box_wh = K.exp(feats[..., 2:4]) * anchors_tensor / K.cast(input_shape[::-1], K.dtype(feats))  
+        
     @param args    [list ]Lambda层输入, [*model_body.output, *y_true]=>
                                         [y1_pred, y2_pred, y3_pred,y1_true, y2_true, y3_true]
                                         [(?,?,75),(?,?,75),(?,?,75),(?,13,13,3,25),(?,26,26,3,25),(?,52,52,3,25)]
+                        model_loss = Lambda(yolo_loss, output_shape=(1,), name='yolo_loss',
+                            arguments={'anchors': anchors, 'num_classes': num_classes, 'ignore_thresh': 0.5})(
+                            [*model_body.output, *y_true])
     @param anchors        [array]锚点数组,shape=>(9,2)
     @param num_classes    [int  ]检测类别数,val=20
     @param ignore_thresh  [float]
@@ -658,14 +652,15 @@ def yolo_loss(args, anchors, num_classes, ignore_thresh=.5, print_loss=False):
     print('==========yolo_loss===========')
     #print([x.shape for x in args])
     num_layers = len(anchors)//3 # default setting
-    yolo_outputs = args[:num_layers] #预测值
-    y_true = args[num_layers:]       #真实值
+    yolo_outputs = args[:num_layers] #预测值, y_pred
+    y_true = args[num_layers:]       #真实值, y_true
     anchor_mask = [[6,7,8], [3,4,5], [0,1,2]] if num_layers==3 else [[3,4,5], [1,2,3]]
     #模型输入大小,val=>(416,416)
     input_shape = K.cast(K.shape(yolo_outputs[0])[1:3] * 32, K.dtype(y_true[0]))                         
     #模型输出FeatureMap大小，val=>[(13,13),(26,26),(52,52)]
     grid_shapes = [K.cast(K.shape(yolo_outputs[l])[1:3], K.dtype(y_true[0])) for l in range(num_layers)] 
     loss = 0 #损失值
+    #batch_size
     m = K.shape(yolo_outputs[0])[0] # batch size, tensor
     mf = K.cast(m, K.dtype(yolo_outputs[0]))
 
@@ -676,15 +671,18 @@ def yolo_loss(args, anchors, num_classes, ignore_thresh=.5, print_loss=False):
         grid, raw_pred, pred_xy, pred_wh = yolo_head(yolo_outputs[l],
              anchors[anchor_mask[l]], num_classes, input_shape, calc_loss=True)
         '''
-        grid.shape  =>(height.width,1,2)
+        grid.shape  =>(height,width,1,2)
         raw_pred    =>yolo_outputs[l]
         '''
         pred_box = K.concatenate([pred_xy, pred_wh])  #预测边框
 
         # Darknet raw box to calculate loss.
-        raw_true_xy = y_true[l][..., :2]*grid_shapes[l][::-1] - grid                           #预测为对grid的偏移
-        raw_true_wh = K.log(y_true[l][..., 2:4] / anchors[anchor_mask[l]] * input_shape[::-1]) #预测为边框尺寸对anchor的比例
-        raw_true_wh = K.switch(object_mask, raw_true_wh, K.zeros_like(raw_true_wh))            # avoid log(0)=-inf
+        #标注数据修正为对grid的偏移
+        raw_true_xy = y_true[l][..., :2]*grid_shapes[l][::-1] - grid                           
+        #标注数据修正为对anchor比例的对数值
+        raw_true_wh = K.log(y_true[l][..., 2:4] / anchors[anchor_mask[l]] * input_shape[::-1]) 
+        #0除处理
+        raw_true_wh = K.switch(object_mask, raw_true_wh, K.zeros_like(raw_true_wh))   # avoid log(0)=-inf
         box_loss_scale = 2 - y_true[l][...,2:3]*y_true[l][...,3:4]
 
         # Find ignore mask, iterate over each of batch.
@@ -705,6 +703,7 @@ def yolo_loss(args, anchors, num_classes, ignore_thresh=.5, print_loss=False):
         #raw_true_xy:相对于grid cell的偏移量归一化值
         #raw_true_wh:边框尺寸对anchor的缩放比例
         #object_mask:标记每个grid cell是否有object,0-没有，1-有
+        
         #xy的loss
         xy_loss = object_mask * box_loss_scale * K.binary_crossentropy(raw_true_xy, raw_pred[...,0:2], from_logits=True) 
         #wh的loss

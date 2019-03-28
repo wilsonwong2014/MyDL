@@ -4,6 +4,10 @@ IPython3时代到来
 从零开始配置深度学习服务器Ubuntu16.04+CUDA8.0+Tensorflow1.4.1
    https://zhuanlan.zhihu.com/p/32185946
 
+人脸检测：MTCNN
+    https://github.com/AITTSMD/MTCNN-Tensorflow
+    https://github.com/xiangrufan/keras-mtcnn
+
 通天塔：论文翻译网站
     http://tongtianta.site
 Tensorflow官网
